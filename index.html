@@ -62,9 +62,29 @@
           • القناص (إذا مفعّل) عنده طلقة واحدة طوال اللعبة (بالنهار).<br>
           • العمدة (إذا مفعّل) صوته محسوب <b>مرتين</b> بدون ما يعرف أحد.
           <div class="mt-3 text-xs text-slate-400">
-            النظام ينفّذ النتائج عند اكتمال التصويت المطلوب أو انتهاء الوقت.
+            النظام ينفّذ النتائج عند اكتمال شرط نهاية المرحلة أو انتهاء الوقت.
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Role reveal (one-time per game on device) -->
+  <div id="roleModal" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/70"></div>
+    <div class="absolute inset-x-0 bottom-0 max-w-md mx-auto p-4">
+      <div class="rounded-3xl border border-slate-800 bg-slate-950 shadow-xl p-5 space-y-3">
+        <div class="text-xl font-extrabold">🎭 دورك</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+          <div id="rmRole" class="text-3xl font-extrabold">—</div>
+          <div id="rmHint" class="text-sm text-slate-300 mt-2 leading-7">—</div>
+        </div>
+        <div class="text-xs text-slate-400 leading-6">
+          ملاحظة: الأدوار ما تظهر لأحد غيرك.
+        </div>
+        <button id="btnRoleOk" class="tap w-full px-4 py-4 rounded-3xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+          فهمت ✅
+        </button>
       </div>
     </div>
   </div>
@@ -119,6 +139,26 @@
           </div>
         </div>
 
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-sm text-slate-300">نهاية النهار</label>
+            <select id="cfgDayEnd"
+              class="mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+              <option value="all">عند تصويت الجميع</option>
+              <option value="majority">عند حصول خيار على أغلبية</option>
+              <option value="timer">انتظار الوقت فقط</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-sm text-slate-300">نهاية الليل</label>
+            <select id="cfgNightEnd"
+              class="mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+              <option value="all">عند إنهاء كل الأدوار</option>
+              <option value="timer">انتظار الوقت فقط</option>
+            </select>
+          </div>
+        </div>
+
         <div>
           <label class="text-sm text-slate-300">عدد المافيا</label>
           <input id="cfgMafia" type="number" min="1" value="1"
@@ -132,85 +172,14 @@
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <!-- sniper -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🎯 قناص</span>
-                <input id="roleSniperOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleSniperCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- jester -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🤡 مهرّج</span>
-                <input id="roleJesterOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleJesterCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- doctor -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🩺 طبيب</span>
-                <input id="roleDoctorOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleDoctorCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- detective -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🔎 محقق</span>
-                <input id="roleDetectiveOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleDetectiveCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- bodyguard -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🛡️ حارس</span>
-                <input id="roleBodyguardOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleBodyguardCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- serial -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🔪 قاتل متسلسل</span>
-                <input id="roleSerialOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleSerialCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- witch (role 3) -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">🧪 ساحرة</span>
-                <input id="roleWitchOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleWitchCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
-
-            <!-- mayor (role 4) -->
-            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
-              <label class="flex items-center justify-between gap-2">
-                <span class="font-bold">👑 عمدة</span>
-                <input id="roleMayorOn" type="checkbox" class="h-5 w-5 accent-sky-500">
-              </label>
-              <input id="roleMayorCount" type="number" min="0" max="10" value="1"
-                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
-            </div>
+            <RoleCard title="🎯 قناص" idOn="roleSniperOn" idCount="roleSniperCount" checked="checked" />
+            <RoleCard title="🤡 مهرّج" idOn="roleJesterOn" idCount="roleJesterCount" checked="checked" />
+            <RoleCard title="🩺 طبيب" idOn="roleDoctorOn" idCount="roleDoctorCount" />
+            <RoleCard title="🔎 محقق" idOn="roleDetectiveOn" idCount="roleDetectiveCount" />
+            <RoleCard title="🛡️ حارس" idOn="roleBodyguardOn" idCount="roleBodyguardCount" />
+            <RoleCard title="🔪 قاتل متسلسل" idOn="roleSerialOn" idCount="roleSerialCount" />
+            <RoleCard title="🧪 ساحرة" idOn="roleWitchOn" idCount="roleWitchCount" />
+            <RoleCard title="👑 عمدة" idOn="roleMayorOn" idCount="roleMayorCount" />
           </div>
 
           <div class="text-xs text-slate-400 leading-6">
@@ -310,6 +279,24 @@
           </div>
         </div>
 
+        <!-- In-game players list -->
+        <div id="inGamePlayersBox" class="hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="font-extrabold text-lg">اللاعبون</div>
+            <div class="text-xs text-slate-400"><span id="inGameCount">—</span></div>
+          </div>
+          <div id="inGamePlayersList" class="space-y-2"></div>
+          <div class="text-xs text-slate-400 leading-6">
+            الحالة تظهر فقط (حي/خارج). الأدوار لا تظهر.
+          </div>
+        </div>
+
+        <!-- History -->
+        <div id="historyBox" class="hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
+          <div class="font-extrabold text-lg">سجل الجولات</div>
+          <div id="historyList" class="space-y-2"></div>
+        </div>
+
         <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
           <div class="flex items-center justify-between">
             <div class="font-extrabold text-lg">دورك</div>
@@ -345,8 +332,30 @@
   </main>
 
 <script>
+// --- RoleCard pseudo component removed: we render real HTML via JS (below) ---
+</script>
+
+<script>
 (() => {
-  // Firebase config (من عندك)
+  // Replace RoleCard tags (simple templating for this single-file HTML)
+  document.querySelectorAll("RoleCard").forEach(el => {
+    const title = el.getAttribute("title") || "";
+    const idOn = el.getAttribute("idOn") || "";
+    const idCount = el.getAttribute("idCount") || "";
+    const checked = el.getAttribute("checked") ? "checked" : "";
+    el.outerHTML = `
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+        <label class="flex items-center justify-between gap-2">
+          <span class="font-bold">${title}</span>
+          <input id="${idOn}" type="checkbox" ${checked} class="h-5 w-5 accent-sky-500">
+        </label>
+        <input id="${idCount}" type="number" min="0" max="10" value="1"
+          class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+      </div>
+    `;
+  });
+
+  // Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyC4YdqgiAfJmRmvkLH4wspzclAzKs3wyLw",
     authDomain: "mafia-game-7e488.firebaseapp.com",
@@ -380,29 +389,34 @@
   function getTopCandidatesWeighted(votesByPid, playersObj, weightFn){
     const tally = {};
     for (const [voterPid, targetId] of Object.entries(votesByPid || {})) {
-      if (!targetId) continue;
+      if (!targetId || targetId === "skip") continue;
       const w = weightFn(voterPid, playersObj);
       tally[targetId] = (tally[targetId] || 0) + w;
     }
     const entries = Object.entries(tally).sort((a,b)=>b[1]-a[1]);
-    if (!entries.length) return { max: 0, candidates: [] };
+    if (!entries.length) return { max: 0, candidates: [], tally:{} };
     const max = entries[0][1];
     const candidates = entries.filter(([,c]) => c === max).map(([id]) => id);
-    return { max, candidates, totalWeight: Object.values(tally).reduce((a,b)=>a+b,0) };
+    return { max, candidates, tally };
   }
 
   function tallyTextWeighted(votesByPid, playersObj, weightFn){
-    const seen = Object.keys(votesByPid || {}).length;
+    const seen = Object.keys(votesByPid || {}).filter(k => (votesByPid||{})[k]).length;
     if (seen === 0) return "لا توجد أصوات بعد.";
     const top = getTopCandidatesWeighted(votesByPid || {}, playersObj, weightFn);
     return `تم تسجيل ${seen} صوت. أعلى خيار عليه ${top.max} (وزن).`;
   }
 
   // Identity storage
-  const LS_KEY = "mafia_identity_auto_v2";
+  const LS_KEY = "mafia_identity_auto_v3";
+  const LS_ROLE_SEEN = "mafia_role_seen_v3";
   const getMe = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch { return null; } };
   const setMe = (o) => localStorage.setItem(LS_KEY, JSON.stringify(o));
   const clearMe = () => localStorage.removeItem(LS_KEY);
+
+  const roleSeenKey = (code, startedAt, pid) => `${code}:${startedAt}:${pid}`;
+  const hasSeenRole = (k) => { try { const o = JSON.parse(localStorage.getItem(LS_ROLE_SEEN) || "{}"); return !!o[k]; } catch { return false; } };
+  const markSeenRole = (k) => { let o={}; try{o=JSON.parse(localStorage.getItem(LS_ROLE_SEEN)||"{}")}catch{}; o[k]=true; localStorage.setItem(LS_ROLE_SEEN, JSON.stringify(o)); };
 
   const SESS = (code) => db.ref(`sessions/${code}`);
 
@@ -413,6 +427,11 @@
   const btnHow = $("btnHow");
   const howModal = $("howModal");
   const btnCloseHow = $("btnCloseHow");
+
+  const roleModal = $("roleModal");
+  const rmRole = $("rmRole");
+  const rmHint = $("rmHint");
+  const btnRoleOk = $("btnRoleOk");
 
   const screenMode = $("screenMode");
   const screenCreate = $("screenCreate");
@@ -426,6 +445,8 @@
   const cfgSeconds = $("cfgSeconds");
   const cfgTieMode = $("cfgTieMode");
   const cfgMafia = $("cfgMafia");
+  const cfgDayEnd = $("cfgDayEnd");
+  const cfgNightEnd = $("cfgNightEnd");
 
   const roleSniperOn = $("roleSniperOn");
   const roleJesterOn = $("roleJesterOn");
@@ -473,6 +494,13 @@
   const playersList = $("playersList");
   const btnStartGame = $("btnStartGame");
 
+  const inGamePlayersBox = $("inGamePlayersBox");
+  const inGameCount = $("inGameCount");
+  const inGamePlayersList = $("inGamePlayersList");
+
+  const historyBox = $("historyBox");
+  const historyList = $("historyList");
+
   const btnToggleRole = $("btnToggleRole");
   const myRoleCard = $("myRoleCard");
   const myRoleText = $("myRoleText");
@@ -497,14 +525,14 @@
   };
 
   // State
-  let me = getMe(); // {code,pid,name,isCreator}
+  let me = getMe();
   let sub = null;
 
-  // Render guards (fix issue 1)
+  // Render guards
   let lastRenderKey = "";
   let lastActionKey = "";
 
-  // Engine heartbeat (reduce UI churn)
+  // Engine heartbeat
   let engineTimer = null;
   let lockExpiresAtLocal = 0;
 
@@ -565,6 +593,8 @@
 
     const seconds = clampInt(cfgSeconds.value, 15, 3600);
     const tieMode = String(cfgTieMode.value || "revote");
+    const dayEnd = String(cfgDayEnd.value || "all");   // all | majority | timer
+    const nightEnd = String(cfgNightEnd.value || "all"); // all | timer
     const mafiaCount = Math.max(1, Number(cfgMafia.value || 1));
     const rolesCfg = readRolesFromUI();
 
@@ -574,6 +604,7 @@
     await SESS(code).set({
       code,
       createdAt: now(),
+      startedAt: 0,
       status: "lobby",
       phase: "lobby",
       round: 0,
@@ -582,6 +613,8 @@
       config: {
         phaseSeconds: seconds,
         tieMode,
+        dayEnd,
+        nightEnd,
         mafiaCount,
         roles: rolesCfg,
         sniperUsedBy: {},
@@ -595,12 +628,13 @@
         dayExtra: { sniper:{} }
       },
       private: { detectiveResults:{} },
+      history: {},
       engine: { lock: { holder:"", expiresAt: 0 }, lastResolveAt: 0 }
     });
 
     await SESS(code).child(`players/${pid}`).set({ id: pid, name, alive:true, role:"", joinedAt: now(), left:false });
 
-    // onDisconnect: قبل بدء اللعبة الأفضل إزالة اللاعب من اللوبي
+    // onDisconnect
     SESS(code).child(`players/${pid}`).onDisconnect().update({ left:true, alive:false, leftAt: now() });
 
     me = { code, pid, name, isCreator:true };
@@ -629,7 +663,7 @@
     const pid = rid();
     await SESS(code).child(`players/${pid}`).set({ id: pid, name, alive:true, role:"", joinedAt: now(), left:false });
 
-    // onDisconnect: إذا قفل الصفحة
+    // onDisconnect
     SESS(code).child(`players/${pid}`).onDisconnect().update({ left:true, alive:false, leftAt: now() });
 
     me = { code, pid, name, isCreator:false };
@@ -643,9 +677,7 @@
 
   async function leaveSession(){
     if (!me?.code || !me?.pid) { clearMe(); location.href = location.pathname; return; }
-    try {
-      await SESS(me.code).child(`players/${me.pid}`).update({ left:true, alive:false, leftAt: now() });
-    } catch {}
+    try { await SESS(me.code).child(`players/${me.pid}`).update({ left:true, alive:false, leftAt: now() }); } catch {}
     clearMe();
     location.href = location.pathname;
   }
@@ -683,7 +715,6 @@
   }
 
   async function maybeRenewLock(code, pid){
-    // renew only when close to expiry (avoid constant session updates)
     if (!lockExpiresAtLocal || lockExpiresAtLocal - now() > 3500) return;
     const lockRef = SESS(code).child("engine/lock");
     const leaseMs = 12000;
@@ -695,8 +726,35 @@
     if (res.committed) lockExpiresAtLocal = res.snapshot.val()?.expiresAt || (now()+leaseMs);
   }
 
-  function aliveRoleCount(players, role){
-    return players.filter(p => p.alive && !p.left && p.role === role).length;
+  const aliveRoleCount = (players, role) => players.filter(p => p.alive && !p.left && p.role === role).length;
+
+  async function pushHistory(code, entry){
+    try {
+      await SESS(code).child("history").push({ t: now(), ...entry });
+      // trim (keep last 30) best-effort
+      const snap = await SESS(code).child("history").limitToLast(40).get();
+      const vals = snap.val() || {};
+      const keys = Object.keys(vals);
+      if (keys.length > 30) {
+        const sorted = keys.sort((a,b) => (vals[a]?.t||0) - (vals[b]?.t||0));
+        const toDel = sorted.slice(0, keys.length - 30);
+        const upd = {};
+        toDel.forEach(k => upd[k] = null);
+        await SESS(code).child("history").update(upd);
+      }
+    } catch {}
+  }
+
+  function majorityReached(dayVotes, playersObj){
+    const alive = Object.values(playersObj || {}).filter(p => p.alive && !p.left);
+    const threshold = Math.floor(alive.length / 2) + 1;
+
+    const weightFn = (voterPid, playersObj2) => {
+      const p = playersObj2[voterPid];
+      return (p?.role === "mayor" && p.alive && !p.left) ? 2 : 1;
+    };
+    const top = getTopCandidatesWeighted(dayVotes || {}, playersObj, weightFn);
+    return top.max >= threshold;
   }
 
   async function engineStep(code, pid){
@@ -715,56 +773,49 @@
       const players = Object.values(playersObj);
       const alive = players.filter(p => p.alive && !p.left);
 
+      const cfg = s.config || {};
+      const nightEnd = String(cfg.nightEnd || "all");
+      const dayEnd = String(cfg.dayEnd || "all");
+
       let ready = false;
 
       if (phase === "night") {
-        const required = [];
-        if (aliveRoleCount(alive, "mafia") > 0) required.push(["votes/night/mafia", "mafia"]);
-        if (aliveRoleCount(alive, "doctor") > 0) required.push(["votes/night/doctor", "doctor"]);
-        if (aliveRoleCount(alive, "detective") > 0) required.push(["votes/night/detective", "detective"]);
-        if (aliveRoleCount(alive, "bodyguard") > 0) required.push(["votes/night/bodyguard", "bodyguard"]);
-        if (aliveRoleCount(alive, "serial") > 0) required.push(["votes/night/serial", "serial"]);
-        if (aliveRoleCount(alive, "witch") > 0) required.push(["votes/night/witchSave", "witch"]); // save optional but we count as action if present (see below)
-
-        // If time ended, resolve regardless.
         if (now() >= phaseEndAt) ready = true;
+        else if (nightEnd === "timer") ready = false;
         else {
-          // require each alive role to have action OR allow "no action" by voting empty? We'll treat missing vote as not ready.
+          // require role actions
           let allDone = true;
 
-          // Mafia must vote
+          // mafia (each mafia must vote)
           const aliveMafia = alive.filter(p => p.role === "mafia").map(p => p.id);
           const mv = s.votes?.night?.mafia || {};
           if (aliveMafia.some(id => !mv[id])) allDone = false;
 
-          // Doctor (optional): must choose or explicitly skip by setting "skip"
+          // doctor (must choose or skip)
           const docAlive = alive.filter(p => p.role === "doctor").map(p => p.id);
           const dv = s.votes?.night?.doctor || {};
           if (docAlive.some(id => !dv[id])) allDone = false;
 
-          // Detective
+          // detective
           const detAlive = alive.filter(p => p.role === "detective").map(p => p.id);
           const detv = s.votes?.night?.detective || {};
           if (detAlive.some(id => !detv[id])) allDone = false;
 
-          // Bodyguard
+          // bodyguard
           const bgAlive = alive.filter(p => p.role === "bodyguard").map(p => p.id);
           const bgv = s.votes?.night?.bodyguard || {};
           if (bgAlive.some(id => !bgv[id])) allDone = false;
 
-          // Serial
+          // serial
           const skAlive = alive.filter(p => p.role === "serial").map(p => p.id);
           const skv = s.votes?.night?.serial || {};
           if (skAlive.some(id => !skv[id])) allDone = false;
 
-          // Witch: she can do nothing; we allow "skip" vote key
+          // witch: allow skip, but we still require an explicit decision (save/poison/skip)
           const wiAlive = alive.filter(p => p.role === "witch").map(p => p.id);
           const wsv = s.votes?.night?.witchSave || {};
           const wpv = s.votes?.night?.witchPoison || {};
-          if (wiAlive.some(id => (!wsv[id] && !wpv[id] && !((wsv[id] === "skip") || (wpv[id] === "skip"))))) {
-            // they didn't choose anything; still allow to be not ready
-            allDone = false;
-          }
+          if (wiAlive.some(id => !(wsv[id] || wpv[id]))) allDone = false;
 
           ready = allDone;
         }
@@ -772,10 +823,13 @@
 
       if (phase === "day") {
         if (now() >= phaseEndAt) ready = true;
-        else {
+        else if (dayEnd === "timer") ready = false;
+        else if (dayEnd === "all") {
           const aliveIds = alive.map(p => p.id);
           const dv = s.votes?.day?.public || {};
           ready = aliveIds.every(id => !!dv[id]);
+        } else if (dayEnd === "majority") {
+          ready = majorityReached(s.votes?.day?.public || {}, playersObj);
         }
       }
 
@@ -786,8 +840,8 @@
       if (now() - lastResolveAt < 1500) return;
       await SESS(code).child("engine/lastResolveAt").set(now());
 
-      const tieMode = String(s.config?.tieMode || "revote");
-      const seconds = clampInt(s.config?.phaseSeconds, 15, 3600);
+      const tieMode = String(cfg.tieMode || "revote");
+      const seconds = clampInt(cfg.phaseSeconds, 15, 3600);
       const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
       async function tieRevote(path, msg){
@@ -797,6 +851,7 @@
           upd["log"] = msg + " تمت إعادة التصويت.";
           upd["phaseEndAt"] = now() + seconds*1000;
           await SESS(code).update(upd);
+          await pushHistory(code, { round: s.round || 0, phase, text: msg + " إعادة تصويت." });
           return { stop:true };
         }
         return { stop:false };
@@ -807,7 +862,7 @@
       if (phase === "night") {
         const events = [];
 
-        // Mafia target (weighted by 1 each)
+        // Mafia target
         const mafiaVotes = s.votes?.night?.mafia || {};
         let mafiaVictimId = "";
         const mafiaTop = getTopCandidatesWeighted(mafiaVotes, playersObj, () => 1);
@@ -815,7 +870,7 @@
         else if (mafiaTop.candidates.length > 1) {
           const r = await tieRevote("votes/night/mafia", `تعادل في تصويت المافيا (${mafiaTop.candidates.length} خيارات).`);
           if (r.stop) return;
-          mafiaVictimId = (tieMode === "random") ? pick(mafiaTop.candidates) : pick(mafiaTop.candidates);
+          mafiaVictimId = pick(mafiaTop.candidates);
         }
 
         // Doctor save
@@ -835,17 +890,20 @@
         let witchSaveId = "";
         let witchPoisonId = "";
 
+        // For witch, each witch submits one choice; we use first valid (since count can be >1 witches)
         for (const [wid, target] of Object.entries(wsv)) {
-          if (target === "skip") continue;
+          if (!target || target === "skip") continue;
           const used = s.config?.witchUsedBy?.[wid] || {};
           if (used.saveUsed) continue;
-          if (target) { witchSaveId = target; await SESS(code).child(`config/witchUsedBy/${wid}/saveUsed`).set(true); }
+          witchSaveId = target;
+          await SESS(code).child(`config/witchUsedBy/${wid}/saveUsed`).set(true);
         }
         for (const [wid, target] of Object.entries(wpv)) {
-          if (target === "skip") continue;
+          if (!target || target === "skip") continue;
           const used = s.config?.witchUsedBy?.[wid] || {};
           if (used.poisonUsed) continue;
-          if (target) { witchPoisonId = target; await SESS(code).child(`config/witchUsedBy/${wid}/poisonUsed`).set(true); }
+          witchPoisonId = target;
+          await SESS(code).child(`config/witchUsedBy/${wid}/poisonUsed`).set(true);
         }
 
         const savedId = doctorSaveId || witchSaveId || "";
@@ -875,23 +933,21 @@
         // Detective results (private)
         const detVotes = s.votes?.night?.detective || {};
         for (const [detPid, targetId] of Object.entries(detVotes || {})) {
+          if (!targetId || targetId === "skip") continue;
           const t = playersObj[targetId];
           const res = t ? (t.role === "mafia" ? "🟥 النتيجة: مافيا" : "🟩 النتيجة: ليس مافيا") : "الهدف غير موجود";
           await SESS(code).child(`private/detectiveResults/${detPid}`).set(res);
         }
 
-        // Apply mafia attack
+        // Apply attacks (public messages without names)
         const applyAttack = async (victimId, label) => {
-          if (!victimId || !aliveObj[victimId]) return;
-          const victimName = aliveObj[victimId].name;
-
-          if (victimId === savedId) { events.push(`🩺 تم إنقاذ لاعب`); return; }
-
+          if (!victimId || victimId === "skip" || !aliveObj[victimId]) return;
+          if (victimId === savedId) { events.push("🩺 تم إنقاذ لاعب"); return; }
           if (victimId === protectedId) {
             const bgAliveOne = alive.find(p => p.role === "bodyguard" && p.alive && !p.left);
             if (bgAliveOne) {
               await SESS(code).child(`players/${bgAliveOne.id}/alive`).set(false);
-              events.push(`🛡️ الحارس ضحّى بنفسه`);
+              events.push("🛡️ الحارس ضحّى بنفسه");
               return;
             }
           }
@@ -903,7 +959,9 @@
         await applyAttack(skVictimId, "🔪 تم قتل لاعب (هجوم القاتل المتسلسل)");
         await applyAttack(witchPoisonId, "🧪 تم تسميم لاعب (الساحرة)");
 
-        await SESS(code).child("log").set(events.length ? events.join(" | ") : "🌙 لم يحدث شيء هذه الليلة.");
+        const msg = events.length ? events.join(" | ") : "🌙 لم يحدث شيء هذه الليلة.";
+        await SESS(code).child("log").set(msg);
+        await pushHistory(code, { round: s.round || 1, phase: "night", text: msg });
 
         // next => day
         await SESS(code).update({
@@ -916,8 +974,8 @@
         const events = [];
 
         const dayVotes = s.votes?.day?.public || {};
-        const weightFn = (voterPid, playersObj) => {
-          const p = playersObj[voterPid];
+        const weightFn = (voterPid, playersObj2) => {
+          const p = playersObj2[voterPid];
           if (p?.role === "mayor" && p.alive && !p.left) return 2;
           return 1;
         };
@@ -937,6 +995,7 @@
             await SESS(code).child(`players/${outId}/alive`).set(false);
             if (out.role === "jester") {
               await SESS(code).update({ winner:"jester", log:"🤡🏆 فاز المهرّج وحده! (تم إقصاؤه بالتصويت)" });
+              await pushHistory(code, { round: s.round || 1, phase: "day", text: "🤡🏆 فاز المهرّج وحده!" });
               return;
             }
             events.push("☀️ تم إقصاء لاعب بالتصويت");
@@ -956,7 +1015,9 @@
           }
         }
 
-        await SESS(code).child("log").set(events.join(" | ") || "☀️ انتهى النهار.");
+        const msg = events.join(" | ") || "☀️ انتهى النهار.";
+        await SESS(code).child("log").set(msg);
+        await pushHistory(code, { round: s.round || 1, phase: "day", text: msg });
 
         // next => night
         await SESS(code).update({
@@ -971,10 +1032,9 @@
       const after = (await SESS(code).get()).val();
       const w = computeWinner(Object.values(after.players || {}));
       if (w) {
-        await SESS(code).update({
-          winner: w,
-          log: w === "serial" ? "🏆 فاز القاتل المتسلسل!" : (w === "mafia" ? "🏆 فازت المافيا!" : "🏆 فاز المواطنون!")
-        });
+        const winMsg = w === "serial" ? "🏆 فاز القاتل المتسلسل!" : (w === "mafia" ? "🏆 فازت المافيا!" : "🏆 فاز المواطنون!");
+        await SESS(code).update({ winner: w, log: winMsg });
+        await pushHistory(code, { round: after.round || 1, phase: after.phase || "", text: winMsg });
       }
 
     } finally {
@@ -1021,6 +1081,8 @@
     const rolesShuffled = shuffle(roles);
     const playersShuffled = shuffle(players);
 
+    const startedAt = now();
+
     const updates = {};
     playersShuffled.forEach((p, idx) => {
       updates[`players/${p.id}/role`] = rolesShuffled[idx];
@@ -1032,32 +1094,75 @@
     updates["phase"] = "night";
     updates["round"] = 1;
     updates["winner"] = "";
-    updates["phaseEndAt"] = now() + seconds*1000;
+    updates["startedAt"] = startedAt;
+    updates["phaseEndAt"] = startedAt + seconds*1000;
     updates["config/sniperUsedBy"] = {};
     updates["config/witchUsedBy"] = {};
     updates["votes"] = { night: { mafia:{}, doctor:{}, detective:{}, bodyguard:{}, serial:{}, witchSave:{}, witchPoison:{} }, day: { public:{} }, dayExtra: { sniper:{} } };
     updates["private/detectiveResults"] = {};
     updates["log"] = "بدأت اللعبة تلقائيًا: ليل 🌙";
+    updates["history"] = {};
 
     await SESS(me.code).update(updates);
+    await pushHistory(me.code, { round: 1, phase: "night", text: "بدأت اللعبة: ليل 🌙" });
     alert("تم البدء ✅");
   }
 
   // -------- Subscribe & Render --------
   function buildRenderKey(s, pid){
-    // Only include parts that affect UI; ignore engine.lock to stop re-render spam (fix issue 1)
     const meObj = s.players?.[pid] || {};
     const subset = {
       status: s.status, phase: s.phase, round: s.round, phaseEndAt: s.phaseEndAt,
-      winner: s.winner, log: s.log,
+      winner: s.winner, log: s.log, startedAt: s.startedAt,
       players: Object.fromEntries(Object.entries(s.players || {}).map(([k,v]) => [k, {id:v.id,name:v.name,alive:v.alive,left:v.left,role:v.role}])),
       votes: s.votes,
-      meRole: meObj.role, meAlive: meObj.alive, meLeft: meObj.left,
       detRes: s.private?.detectiveResults?.[pid] || "",
       sniperUsed: s.config?.sniperUsedBy?.[pid] || false,
-      witchUsed: s.config?.witchUsedBy?.[pid] || {}
+      witchUsed: s.config?.witchUsedBy?.[pid] || {},
+      history: s.history || {}
     };
     return JSON.stringify(subset);
+  }
+
+  function renderHistory(historyObj){
+    const arr = Object.values(historyObj || {}).sort((a,b)=> (b.t||0)-(a.t||0)).slice(0, 10);
+    historyList.innerHTML = arr.length ? "" : `<div class="text-slate-400 text-sm">لا يوجد سجل بعد.</div>`;
+    arr.forEach(e => {
+      const ph = e.phase === "night" ? "ليل" : (e.phase === "day" ? "نهار" : e.phase || "");
+      historyList.innerHTML += `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+          <div class="text-xs text-slate-400">جولة ${escapeHtml(String(e.round||"—"))} · ${escapeHtml(ph)}</div>
+          <div class="mt-1 text-sm text-slate-200 leading-6">${escapeHtml(e.text || "")}</div>
+        </div>
+      `;
+    });
+  }
+
+  function renderInGamePlayers(playersObj, myPid){
+    const players = Object.values(playersObj || {}).filter(p => !p.left);
+    const alive = players.filter(p => p.alive);
+    inGameCount.textContent = `${alive.length} أحياء / ${players.length} إجمالي`;
+    inGamePlayersList.innerHTML = players.length ? "" : `<div class="text-slate-400 text-sm">لا يوجد لاعبين.</div>`;
+    players.sort((a,b)=> (a.alive===b.alive? a.name.localeCompare(b.name): (a.alive? -1:1))).forEach(p => {
+      const isMe = p.id === myPid;
+      const badge = p.alive ? `<span class="text-xs px-2 py-1 rounded-xl border border-emerald-700 bg-emerald-900/20">حي</span>`
+                            : `<span class="text-xs px-2 py-1 rounded-xl border border-rose-700 bg-rose-900/20">خارج</span>`;
+      inGamePlayersList.innerHTML += `
+        <div class="flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-3 py-2">
+          <div class="font-bold">${escapeHtml(p.name)}${isMe ? ` <span class="text-xs text-slate-400">(أنت)</span>` : ""}</div>
+          ${badge}
+        </div>
+      `;
+    });
+  }
+
+  function maybeShowRoleOnce(s, pid, roleKey){
+    if (!s.startedAt || !roleKey || roleKey === "") return;
+    const k = roleSeenKey(s.code, s.startedAt, pid);
+    if (hasSeenRole(k)) return;
+    rmRole.textContent = ROLE_UI[roleKey]?.name || roleKey;
+    rmHint.textContent = ROLE_UI[roleKey]?.hint || "—";
+    roleModal.classList.remove("hidden");
   }
 
   function subscribe(code, pid){
@@ -1074,25 +1179,24 @@
       const s = snap.val();
       if (!s) return;
 
-      // update creator badge
       me.isCreator = (me.pid === s.creatorPid);
       setMe(me);
       badgeMini.textContent = me.isCreator ? "مُنشئ" : "لاعب";
 
       const key = buildRenderKey(s, pid);
-      if (key === lastRenderKey) return; // ignore lock churn
+      if (key === lastRenderKey) return;
       lastRenderKey = key;
 
-      // base info
       publicLog.textContent = s.log || "—";
 
-      // status: lobby
       if (s.status === "lobby") {
         pPhase.textContent = "لوبّي";
         pRound.textContent = "—";
         phaseLeft.textContent = "—";
         lobbyHint.innerHTML = `بانتظار بدء اللعبة… شارك الرابط ودخلوا كلّكم.`;
         lobbyBox.classList.remove("hidden");
+        inGamePlayersBox.classList.add("hidden");
+        historyBox.classList.add("hidden");
 
         const players = Object.values(s.players || {}).filter(p => !p.left);
         playerCount.textContent = `${players.length} لاعبين`;
@@ -1114,9 +1218,11 @@
         return;
       }
 
-      lobbyBox.classList.add("hidden");
-
       // playing
+      lobbyBox.classList.add("hidden");
+      inGamePlayersBox.classList.remove("hidden");
+      historyBox.classList.remove("hidden");
+
       const phase = s.phase;
       pPhase.textContent = phase === "night" ? "ليل 🌙" : "نهار ☀️";
       pRound.textContent = String(s.round || 1);
@@ -1133,10 +1239,15 @@
           s.winner === "mafia" ? "🟥🏆 فازت المافيا!" : "🟩🏆 فاز المواطنون!";
       } else winnerBanner.classList.add("hidden");
 
+      renderInGamePlayers(s.players || {}, pid);
+      renderHistory(s.history || {});
+
       const meObj = s.players?.[pid];
       if (!meObj) return;
 
       const roleKey = meObj.role || "";
+
+      // role UI
       if (!roleKey) {
         myRoleText.textContent = "بانتظار توزيع الأدوار…";
         myRoleHint.textContent = "سيتم التوزيع عند بدء اللعبة.";
@@ -1145,16 +1256,19 @@
         myRoleHint.textContent = ROLE_UI[roleKey]?.hint || "—";
       }
 
+      // show role once
+      maybeShowRoleOnce(s, pid, roleKey);
+
       const detRes = s.private?.detectiveResults?.[pid];
       if (detRes) { roleExtraBox.classList.remove("hidden"); roleExtraText.textContent = detRes; }
       else roleExtraBox.classList.add("hidden");
 
-      // live tally (no names)
+      // live tally
       if (phase === "night") {
         liveTally.textContent = tallyTextWeighted(s.votes?.night?.mafia || {}, s.players || {}, () => 1);
       } else {
-        const weightFn = (voterPid, playersObj) => {
-          const p = playersObj[voterPid];
+        const weightFn = (voterPid, playersObj2) => {
+          const p = playersObj2[voterPid];
           return (p?.role === "mayor" && p.alive && !p.left) ? 2 : 1;
         };
         liveTally.textContent = tallyTextWeighted(s.votes?.day?.public || {}, s.players || {}, weightFn);
@@ -1165,7 +1279,6 @@
   }
 
   function renderPlayerAction(s, pid, meObj, roleKey){
-    // Guard: don't rebuild action UI if it hasn't changed (fix issue 1)
     const actionKey = JSON.stringify({
       status: s.status, phase: s.phase, winner: s.winner,
       roleKey, alive: meObj.alive, left: meObj.left,
@@ -1200,47 +1313,42 @@
       return;
     }
 
+    const aliveNoSelf = buildAliveOptions(playersObj, pid, false);
+    const aliveAllowSelf = buildAliveOptions(playersObj, pid, true);
+
     // NIGHT
     if (phase === "night") {
       const parts = [];
       if (roleKey === "mafia") parts.push(s.votes?.night?.mafia?.[pid] ? "✅ صوّت (مافيا)" : "⏳ لم تصوّت (مافيا)");
-      if (roleKey === "doctor") parts.push(s.votes?.night?.doctor?.[pid] ? "✅ اخترت إنقاذ" : "⏳ لم تختر إنقاذ");
-      if (roleKey === "detective") parts.push(s.votes?.night?.detective?.[pid] ? "✅ اخترت تحقيق" : "⏳ لم تختر تحقيق");
-      if (roleKey === "bodyguard") parts.push(s.votes?.night?.bodyguard?.[pid] ? "✅ اخترت حماية" : "⏳ لم تختر حماية");
-      if (roleKey === "serial") parts.push(s.votes?.night?.serial?.[pid] ? "✅ اخترت قتل" : "⏳ لم تختر قتل");
-      if (roleKey === "witch") {
-        const ws = s.votes?.night?.witchSave?.[pid];
-        const wp = s.votes?.night?.witchPoison?.[pid];
-        parts.push((ws || wp) ? "✅ قرارات الساحرة مسجّلة" : "⏳ لم تختاري قرار");
-      }
+      if (roleKey === "doctor") parts.push(s.votes?.night?.doctor?.[pid] ? "✅ اخترت إنقاذ/تخطي" : "⏳ لم تختر");
+      if (roleKey === "detective") parts.push(s.votes?.night?.detective?.[pid] ? "✅ اخترت تحقيق/تخطي" : "⏳ لم تختر");
+      if (roleKey === "bodyguard") parts.push(s.votes?.night?.bodyguard?.[pid] ? "✅ اخترت حماية/تخطي" : "⏳ لم تختر");
+      if (roleKey === "serial") parts.push(s.votes?.night?.serial?.[pid] ? "✅ اخترت قتل/تخطي" : "⏳ لم تختر");
+      if (roleKey === "witch") parts.push((s.votes?.night?.witchSave?.[pid] || s.votes?.night?.witchPoison?.[pid]) ? "✅ قرار/تخطي" : "⏳ لم تختاري");
       myVoteStatus.textContent = parts.length ? parts.join(" | ") : "ليل: لا يوجد إجراء لك.";
 
-      const aliveNoSelf = buildAliveOptions(playersObj, pid, false);
-      const aliveAllowSelf = buildAliveOptions(playersObj, pid, true);
+      const mkSendBlock = (title, selId, btnId, path, already, color) => `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+          <div class="font-extrabold text-lg">${title}</div>
+          <select id="${selId}" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+            <option value="">اختر</option>${aliveNoSelf}
+          </select>
+          <button id="${btnId}" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : color} font-extrabold" ${already ? "disabled" : ""}>
+            ${already ? "تم الإرسال" : "إرسال"}
+          </button>
+          <button id="${btnId}Skip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
+        </div>
+      `;
 
       if (roleKey === "mafia") {
         const already = s.votes?.night?.mafia?.[pid];
-        pActionBox.innerHTML = `
-          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
-            <div class="font-extrabold text-lg">تصويت المافيا (قتل)</div>
-            <select id="selNightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-              <option value="">اختر الضحية</option>${aliveNoSelf}
-            </select>
-            <button id="btnNightKill" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
-              ${already ? "تم الإرسال" : "إرسال"}
-            </button>
-            <button id="btnNightKillSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">
-              (اختياري) تخطي
-            </button>
-          </div>`;
-        if (!already) {
-          $("btnNightKill").addEventListener("click", async () => {
-            const victimId = $("selNightKill").value || "";
-            if (!victimId) return alert("اختر الضحية.");
-            await SESS(me.code).child(`votes/night/mafia/${pid}`).set(victimId);
-            alert("تم ✅");
-          });
-        }
+        pActionBox.innerHTML = mkSendBlock("تصويت المافيا (قتل)", "selNightKill", "btnNightKill", `votes/night/mafia/${pid}`, !!already, "bg-rose-600 hover:bg-rose-500");
+        if (!already) $("btnNightKill").addEventListener("click", async () => {
+          const victimId = $("selNightKill").value || "";
+          if (!victimId) return alert("اختر الضحية.");
+          await SESS(me.code).child(`votes/night/mafia/${pid}`).set(victimId);
+          alert("تم ✅");
+        });
         $("btnNightKillSkip").addEventListener("click", async () => {
           await SESS(me.code).child(`votes/night/mafia/${pid}`).set("skip");
           alert("تم ✅");
@@ -1259,9 +1367,7 @@
             <button id="btnDoc" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-emerald-600 hover:bg-emerald-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
-            <button id="btnDocSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">
-              تخطي
-            </button>
+            <button id="btnDocSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
           </div>`;
         if (!already) $("btnDoc").addEventListener("click", async () => {
           const t = $("selDoc").value || "";
@@ -1287,9 +1393,7 @@
             <button id="btnDet" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-sky-600 hover:bg-sky-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
-            <button id="btnDetSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">
-              تخطي
-            </button>
+            <button id="btnDetSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
             <div class="text-xs text-slate-400">النتيجة تظهر لك فقط بعد التنفيذ.</div>
           </div>`;
         if (!already) $("btnDet").addEventListener("click", async () => {
@@ -1316,9 +1420,7 @@
             <button id="btnBg" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-indigo-600 hover:bg-indigo-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
-            <button id="btnBgSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">
-              تخطي
-            </button>
+            <button id="btnBgSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
           </div>`;
         if (!already) $("btnBg").addEventListener("click", async () => {
           const t = $("selBg").value || "";
@@ -1335,19 +1437,7 @@
 
       if (roleKey === "serial") {
         const already = s.votes?.night?.serial?.[pid];
-        pActionBox.innerHTML = `
-          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
-            <div class="font-extrabold text-lg">🔪 القاتل المتسلسل (قتل)</div>
-            <select id="selSk" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-              <option value="">اختر الضحية</option>${aliveNoSelf}
-            </select>
-            <button id="btnSk" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
-              ${already ? "تم الإرسال" : "إرسال"}
-            </button>
-            <button id="btnSkSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">
-              تخطي
-            </button>
-          </div>`;
+        pActionBox.innerHTML = mkSendBlock("🔪 القاتل المتسلسل (قتل)", "selSk", "btnSk", `votes/night/serial/${pid}`, !!already, "bg-rose-600 hover:bg-rose-500");
         if (!already) $("btnSk").addEventListener("click", async () => {
           const t = $("selSk").value || "";
           if (!t) return alert("اختر الضحية.");
@@ -1508,6 +1598,18 @@
   btnHow.addEventListener("click", () => howModal.classList.remove("hidden"));
   btnCloseHow.addEventListener("click", () => howModal.classList.add("hidden"));
   howModal.addEventListener("click", (e) => { if (e.target === howModal) howModal.classList.add("hidden"); });
+
+  btnRoleOk.addEventListener("click", async () => {
+    roleModal.classList.add("hidden");
+    // mark seen
+    try {
+      const snap = await SESS(me.code).get();
+      const s = snap.val();
+      const k = roleSeenKey(s.code, s.startedAt, me.pid);
+      markSeenRole(k);
+    } catch {}
+  });
+  roleModal.addEventListener("click", (e) => { if (e.target === roleModal) roleModal.classList.add("hidden"); });
 
   // Countdown (local only)
   setInterval(() => {
