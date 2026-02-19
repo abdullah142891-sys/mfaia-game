@@ -3,765 +3,667 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>مافيا — مدير الجلسة</title>
-
+  <title>مافيا — جلسة مشتركة</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase (Realtime DB) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-database-compat.js"></script>
+
   <style>
     body { padding-bottom: env(safe-area-inset-bottom); }
     .tap { -webkit-tap-highlight-color: transparent; }
-    .no-scrollbar::-webkit-scrollbar{ display:none; }
-    .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
   </style>
 </head>
 
 <body class="bg-slate-950 text-slate-100 min-h-screen">
   <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur border-b border-slate-800">
     <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="font-extrabold text-lg">🕵️‍♂️ مافيا</div>
-      <div class="flex gap-2">
-        <button id="btnHome" class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hidden">
-          الإعداد
-        </button>
-        <button id="btnResetAll" class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">
-          إعادة ضبط
-        </button>
-      </div>
+      <div class="font-extrabold text-lg">🕵️‍♂️ مافيا (جلسة)</div>
+      <button id="btnResetLocal" class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">
+        مسح بيانات جهازي
+      </button>
     </div>
   </header>
 
   <main class="max-w-md mx-auto px-4 py-5 space-y-4">
 
-    <!-- شاشة الإعداد -->
-    <section id="screenSetup" class="space-y-4">
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 shadow">
-        <h1 class="text-xl font-extrabold">إعداد اللعبة (جوال)</h1>
-        <p class="text-slate-300 text-sm mt-1">
-          اكتب أسماء اللاعبين، اختر الأدوار، ثم وزّعها بسرّية لاعب-لاعب.
-        </p>
-      </div>
-
+    <!-- شاشة اختيار: مدير / لاعب -->
+    <section id="screenMode" class="space-y-4">
       <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-        <label class="text-sm text-slate-300">اسم اللاعب</label>
-        <div class="mt-2 flex gap-2">
-          <input id="playerName"
-                 class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
-                 placeholder="مثال: عبدالله" />
-          <button id="btnAddPlayer"
-                  class="tap shrink-0 px-4 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 font-bold">
-            إضافة
-          </button>
-        </div>
-
-        <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
-          <span>نصيحة: 7+ لاعبين أفضل</span>
-          <button id="btnAddSample" class="tap underline hover:text-slate-200">إضافة أسماء تجريبية</button>
-        </div>
+        <h1 class="text-xl font-extrabold">اختر وضعك</h1>
+        <p class="text-slate-300 text-sm mt-1">المدير = أنت فقط. اللاعب = كل شخص يدخل من جواله.</p>
       </div>
 
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-        <div class="flex items-center justify-between">
-          <h2 class="font-extrabold">اللاعبون</h2>
-          <span id="playersCount" class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-2 py-1 rounded-xl">0</span>
-        </div>
+      <button id="btnGoHost" class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+        أنا المدير (إنشاء جلسة)
+      </button>
 
-        <div id="playersList" class="mt-3 space-y-2"></div>
-
-        <div class="mt-3 text-xs text-slate-400">
-          اضغط ✕ لحذف لاعب.
-        </div>
-      </div>
-
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
-        <h2 class="font-extrabold">الأدوار</h2>
-        <p class="text-xs text-slate-300">
-          اختر عدد كل دور. سيتم توزيعها عشوائيًا. الباقي يصيرون "مواطن".
-        </p>
-
-        <div id="rolesBox" class="space-y-3"></div>
-
-        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-xs text-slate-300">
-          <div class="font-bold mb-1">ملاحظة</div>
-          <div>لو مجموع الأدوار أكبر من عدد اللاعبين، ما راح يكمل التوزيع.</div>
-        </div>
-      </div>
-
-      <button id="btnAssignRoles"
-              class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
-        🎲 توزيع الأدوار (بدء الكشف السري)
+      <button id="btnGoPlayer" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold text-lg">
+        أنا لاعب (دخول جلسة)
       </button>
     </section>
 
-    <!-- شاشة الكشف السري -->
-    <section id="screenReveal" class="hidden space-y-4">
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <!-- شاشة المدير -->
+    <section id="screenHost" class="hidden space-y-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-2">
         <div class="flex items-center justify-between">
           <div>
-            <div class="text-xs text-slate-300">اللاعب الحالي</div>
-            <div id="revealPlayerName" class="text-xl font-extrabold mt-1"></div>
+            <div class="text-xs text-slate-300">كود الجلسة</div>
+            <div id="hostCode" class="text-3xl font-extrabold tracking-widest">—</div>
           </div>
-          <div class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-3 py-2 rounded-2xl">
-            <span id="revealIndex">1</span>/<span id="revealTotal">1</span>
+          <button id="btnCopyJoin" class="tap px-4 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
+            نسخ رابط الدخول
+          </button>
+        </div>
+        <div class="text-sm text-slate-300">
+          شارك الكود (أو الرابط) مع اللاعبين. كل لاعب يدخل باسم مختلف.
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
+        <h2 class="font-extrabold">إعداد الأدوار (بدون ما تشوف توزيعها)</h2>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-sm text-slate-300">عدد المافيا</label>
+            <input id="hostMafia" type="number" min="1" value="1"
+              class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+          </div>
+          <div>
+            <label class="text-sm text-slate-300">أدوار إضافية لاحقًا</label>
+            <div class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 text-slate-400 text-sm">
+              (قناص + مهرّج سنفعّلهم بعد التأكد)
+            </div>
           </div>
         </div>
 
-        <div class="mt-3 text-sm text-slate-300">
-          مرّر الجوال للاعب هذا. اضغط "أظهر دوري" ثم "إخفاء" بعد ما يشوف.
+        <button id="btnHostLockAndAssign" class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+          قفل اللاعبين + توزيع الأدوار
+        </button>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300">
+          <div class="font-extrabold">قائمة اللاعبين (أحياء/مسجلين)</div>
+          <div id="hostPlayers" class="mt-2 space-y-2"></div>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-2">
-        <button id="btnPrevReveal" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
-          ⬅️ السابق
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs text-slate-300">المرحلة</div>
+            <div id="hostPhase" class="text-2xl font-extrabold">—</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs text-slate-300">الجولة</div>
+            <div id="hostRound" class="text-2xl font-extrabold">—</div>
+          </div>
+        </div>
+
+        <button id="btnHostTogglePhase" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold">
+          تبديل ليل/نهار
         </button>
-        <button id="btnNextReveal" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
-          التالي ➡️
+
+        <button id="btnHostResolve" class="tap w-full px-4 py-4 rounded-2xl bg-amber-600 hover:bg-amber-500 font-extrabold">
+          تنفيذ نتائج المرحلة الحالية
         </button>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-sm text-slate-300">
+          <div class="font-extrabold">النتيجة الأخيرة</div>
+          <div id="hostLog" class="mt-1 text-slate-300">—</div>
+        </div>
       </div>
 
-      <button id="btnShowRole" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold text-lg">
-        👁️ أظهر دوري
-      </button>
-
-      <button id="btnHideRole" class="hidden tap w-full px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
-        🙈 إخفاء
-      </button>
-
-      <div id="roleCard" class="hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-        <div class="text-xs text-slate-300">دورك</div>
-        <div id="roleName" class="text-2xl font-extrabold mt-1"></div>
-        <div id="roleHint" class="text-slate-300 text-sm mt-2"></div>
-      </div>
-
-      <button id="btnStartGame" class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
-        ✅ بدء إدارة اللعبة
-      </button>
-
-      <button id="btnGoBackSetup" class="tap w-full px-4 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold">
-        رجوع للإعداد
+      <button id="btnBackMode1" class="tap w-full px-4 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold">
+        رجوع
       </button>
     </section>
 
-    <!-- شاشة إدارة اللعبة -->
-    <section id="screenGame" class="hidden space-y-4">
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-        <div class="flex items-center justify-between">
-          <div class="space-y-1">
-            <div class="text-xs text-slate-300">المرحلة</div>
-            <div id="phaseLabel" class="text-2xl font-extrabold">ليل 🌙</div>
-          </div>
-          <div class="text-right space-y-1">
-            <div class="text-xs text-slate-300">الجولة</div>
-            <div class="text-2xl font-extrabold"><span id="roundLabel">1</span></div>
-          </div>
-        </div>
-
-        <div class="mt-3 flex gap-2">
-          <button id="btnTogglePhase" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold">
-            تبديل إلى النهار ☀️
-          </button>
-        </div>
-
-        <div class="mt-3 rounded-2xl border border-slate-800 bg-slate-950 p-3 text-xs text-slate-300">
-          <div id="winBox">—</div>
-        </div>
-      </div>
-
-      <!-- قائمة اللاعبين -->
-      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
-        <div class="flex items-center justify-between">
-          <h2 class="font-extrabold">اللاعبون</h2>
-          <span class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-2 py-1 rounded-xl">
-            اضغط على اللاعب لإحياء/إقصاء (للطوارئ)
-          </span>
-        </div>
-        <div id="playersGrid" class="mt-3 grid grid-cols-1 gap-2"></div>
-      </div>
-
-      <!-- أوامر المرحلة -->
+    <!-- شاشة اللاعب -->
+    <section id="screenPlayer" class="hidden space-y-4">
       <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
-        <h2 class="font-extrabold">أوامر المرحلة</h2>
+        <h2 class="text-xl font-extrabold">دخول جلسة</h2>
 
-        <!-- ليل -->
-        <div id="nightPanel" class="space-y-3">
-          <div class="text-sm text-slate-300">ليل: المافيا تختار ضحية — الطبيب ينقذ — المحقق يحقق.</div>
+        <label class="text-sm text-slate-300">كود الجلسة</label>
+        <input id="playerCode" placeholder="مثال: 482913"
+          class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
 
-          <div class="space-y-2">
-            <label class="text-sm text-slate-300">اختيار المافيا (الضحية)</label>
-            <select id="nightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"></select>
+        <label class="text-sm text-slate-300">اسمك</label>
+        <input id="playerName" placeholder="مثال: عبدالله"
+          class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+
+        <button id="btnPlayerJoin" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold text-lg">
+          دخول
+        </button>
+
+        <div class="text-xs text-slate-400">بعد الدخول سيظهر دورك أنت فقط.</div>
+      </div>
+
+      <div id="playerAfterJoin" class="hidden space-y-4">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+          <div class="text-xs text-slate-300">أنت داخل جلسة</div>
+          <div class="text-2xl font-extrabold mt-1">
+            <span id="pName">—</span> · <span class="tracking-widest" id="pCode">—</span>
           </div>
-
-          <div class="space-y-2" id="doctorBox">
-            <label class="text-sm text-slate-300">اختيار الطبيب (الإنقاذ)</label>
-            <select id="nightSave" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"></select>
-          </div>
-
-          <div class="space-y-2" id="detectiveBox">
-            <label class="text-sm text-slate-300">اختيار المحقق (التحقيق)</label>
-            <select id="nightCheck" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"></select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <button id="btnResolveNight" class="tap px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold">
-              تنفيذ نتائج الليل
-            </button>
-            <button id="btnClearNight" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
-              مسح
-            </button>
-          </div>
-
-          <div id="nightResultCard" class="hidden rounded-2xl border border-slate-800 bg-slate-950 p-3">
-            <div id="nightResultTitle" class="font-extrabold"></div>
-            <div id="nightResultDetails" class="text-sm text-slate-300 mt-1"></div>
+          <div class="mt-3 text-sm text-slate-300">
+            دورك لن يظهر لغيرك.
           </div>
         </div>
 
-        <!-- نهار -->
-        <div id="dayPanel" class="hidden space-y-3">
-          <div class="text-sm text-slate-300">نهار: نقاش ثم تصويت لإقصاء لاعب.</div>
+        <button id="btnRevealMyRole" class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+          👁️ إظهار دوري
+        </button>
 
-          <div class="space-y-2">
-            <label class="text-sm text-slate-300">التصويت لإقصاء</label>
-            <select id="dayVote" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"></select>
-          </div>
+        <button id="btnHideMyRole" class="hidden tap w-full px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
+          🙈 إخفاء
+        </button>
 
-          <div class="grid grid-cols-2 gap-2">
-            <button id="btnResolveVote" class="tap px-4 py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 font-extrabold">
-              تثبيت التصويت (إقصاء)
-            </button>
-            <button id="btnClearVote" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
-              مسح
-            </button>
-          </div>
+        <div id="myRoleCard" class="hidden rounded-2xl border border-slate-800 bg-slate-950 p-4">
+          <div class="text-xs text-slate-300">دورك</div>
+          <div id="myRoleText" class="text-3xl font-extrabold mt-1">—</div>
+          <div id="myRoleHint" class="text-sm text-slate-300 mt-2">—</div>
+        </div>
 
-          <!-- القناص -->
-          <div id="sniperPanel" class="rounded-2xl border border-slate-800 bg-slate-950 p-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="font-extrabold">🎯 القناص</div>
-              <span id="sniperStatus" class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-2 py-1 rounded-xl">—</span>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-300">المرحلة</div>
+              <div id="pPhase" class="text-2xl font-extrabold">—</div>
             </div>
-            <div class="text-sm text-slate-300">طلقة واحدة طوال اللعبة (اختياري استخدامها).</div>
+            <div class="text-right">
+              <div class="text-xs text-slate-300">الجولة</div>
+              <div id="pRound" class="text-2xl font-extrabold">—</div>
+            </div>
+          </div>
 
-            <label class="text-sm text-slate-300">اختيار هدف القناص</label>
-            <select id="sniperTarget" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"></select>
-
-            <button id="btnUseSniper" class="tap w-full px-4 py-4 rounded-2xl bg-amber-600 hover:bg-amber-500 font-extrabold">
-              إطلاق الطلقة (مرة واحدة)
-            </button>
+          <div id="pActionBox" class="mt-4 space-y-3">
+            <!-- تظهر هنا واجهة التصويت حسب الدور/المرحلة -->
           </div>
         </div>
 
+        <button id="btnBackMode2" class="tap w-full px-4 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold">
+          رجوع
+        </button>
       </div>
     </section>
   </main>
 
 <script>
 (() => {
+  // ================== 1) ضع firebaseConfig هنا ==================
+const firebaseConfig = {
+  apiKey: "AIzaSyC4YdqgiAfJmRmvkLH4wspzclAzKs3wyLw",
+  authDomain: "mafia-game-7e488.firebaseapp.com",
+  databaseURL: "https://mafia-game-7e488-default-rtdb.firebaseio.com",
+  projectId: "mafia-game-7e488",
+  storageBucket: "mafia-game-7e488.firebasestorage.app",
+  messagingSenderId: "513186840934",
+  appId: "1:513186840934:web:ccf858b27cea91be1448a7"
+};
+
+  // =============================================================
+
   const $ = (id) => document.getElementById(id);
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // ---------- Helpers ----------
+  const rid = () => (crypto?.getRandomValues ? [...crypto.getRandomValues(new Uint32Array(2))].map(x=>x.toString(16)).join("") : String(Math.random()).slice(2));
+  const code6 = () => String(Math.floor(100000 + Math.random() * 900000));
+  const now = () => Date.now();
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
   const shuffle = (arr) => {
     const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
+    for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
     return a;
   };
-  const rid = () => (crypto?.getRandomValues ? [...crypto.getRandomValues(new Uint32Array(2))].map(x=>x.toString(16)).join("") : String(Math.random()).slice(2));
+  function setScreen(name){
+    ["screenMode","screenHost","screenPlayer"].forEach(x=>$(x).classList.add("hidden"));
+    $(name).classList.remove("hidden");
+  }
+  function toast(msg){ alert(msg); }
 
-  // ====== الأدوار (بما فيها: قناص + مهرّج) ======
-  const ROLE_DEFS = [
-    { key:"mafia", name:"مافيا", defaultCount:1, hint:"بالليل تختارون ضحية. بالنهار حاولوا ما تنكشفون." },
-    { key:"doctor", name:"طبيب", defaultCount:1, hint:"بالليل تختار شخص تنقذه." },
-    { key:"detective", name:"محقق", defaultCount:1, hint:"بالليل تحقق في لاعب وتعرف إذا هو مافيا أو لا." },
+  // ---------- Local identity (لكل جهاز لاعب) ----------
+  const LS_KEY = "mafia_player_identity_v1";
+  function getIdentity(){
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }
+  function setIdentity(obj){
+    localStorage.setItem(LS_KEY, JSON.stringify(obj));
+  }
+  function clearIdentity(){
+    localStorage.removeItem(LS_KEY);
+  }
 
-    // إضافية حسب اختيارك
-    { key:"sniper", name:"قناص", defaultCount:1, hint:"طلقة واحدة طوال اللعبة (عادة بالنهار)."},
-    { key:"jester", name:"مهرّج", defaultCount:1, hint:"إذا تم إقصاؤك بالتصويت → تفوز وحدك فورًا."},
-  ];
-
-  // ====== الحالة ======
-  const state = {
-    players: [], // {id,name,roleKey,roleName,alive:true}
-    roleCounts: Object.fromEntries(ROLE_DEFS.map(r => [r.key, r.defaultCount])),
-    revealIndex: 0,
-    phase: "night",
-    round: 1,
-    sniperUsed: false,
+  // ---------- Roles (MVP) ----------
+  const ROLE_HINT = {
+    mafia: "أنت مافيا: بالليل صوّت لقتل لاعب بدون ما تنكشف.",
+    citizen: "أنت مواطن: راقب الكلام وصوّت صح في النهار.",
+    // بنضيف الطبيب/المحقق/القناص/المهرّج مباشرة بعد ما نتأكد المزامنة شغالة
   };
 
-  // ====== عناصر ======
-  const btnHome = $("btnHome");
-  const btnResetAll = $("btnResetAll");
+  // ---------- Firebase paths ----------
+  const SESS = (code) => db.ref(`sessions/${code}`);
 
-  const screenSetup = $("screenSetup");
-  const screenReveal = $("screenReveal");
-  const screenGame = $("screenGame");
+  // ---------- UI refs ----------
+  const btnGoHost = $("btnGoHost");
+  const btnGoPlayer = $("btnGoPlayer");
+  const btnResetLocal = $("btnResetLocal");
 
+  // Host UI
+  const hostCodeEl = $("hostCode");
+  const btnCopyJoin = $("btnCopyJoin");
+  const hostMafia = $("hostMafia");
+  const btnHostLockAndAssign = $("btnHostLockAndAssign");
+  const hostPlayers = $("hostPlayers");
+  const hostPhase = $("hostPhase");
+  const hostRound = $("hostRound");
+  const btnHostTogglePhase = $("btnHostTogglePhase");
+  const btnHostResolve = $("btnHostResolve");
+  const hostLog = $("hostLog");
+  const btnBackMode1 = $("btnBackMode1");
+
+  // Player UI
+  const playerCode = $("playerCode");
   const playerName = $("playerName");
-  const btnAddPlayer = $("btnAddPlayer");
-  const btnAddSample = $("btnAddSample");
-  const playersList = $("playersList");
-  const playersCount = $("playersCount");
+  const btnPlayerJoin = $("btnPlayerJoin");
+  const playerAfterJoin = $("playerAfterJoin");
+  const pName = $("pName");
+  const pCode = $("pCode");
+  const btnRevealMyRole = $("btnRevealMyRole");
+  const btnHideMyRole = $("btnHideMyRole");
+  const myRoleCard = $("myRoleCard");
+  const myRoleText = $("myRoleText");
+  const myRoleHint = $("myRoleHint");
+  const pPhase = $("pPhase");
+  const pRound = $("pRound");
+  const pActionBox = $("pActionBox");
+  const btnBackMode2 = $("btnBackMode2");
 
-  const rolesBox = $("rolesBox");
-  const btnAssignRoles = $("btnAssignRoles");
-
-  const revealPlayerName = $("revealPlayerName");
-  const revealIndexEl = $("revealIndex");
-  const revealTotalEl = $("revealTotal");
-  const btnPrevReveal = $("btnPrevReveal");
-  const btnNextReveal = $("btnNextReveal");
-  const btnShowRole = $("btnShowRole");
-  const btnHideRole = $("btnHideRole");
-  const roleCard = $("roleCard");
-  const roleName = $("roleName");
-  const roleHint = $("roleHint");
-  const btnStartGame = $("btnStartGame");
-  const btnGoBackSetup = $("btnGoBackSetup");
-
-  const phaseLabel = $("phaseLabel");
-  const roundLabel = $("roundLabel");
-  const btnTogglePhase = $("btnTogglePhase");
-  const winBox = $("winBox");
-
-  const playersGrid = $("playersGrid");
-
-  const nightPanel = $("nightPanel");
-  const dayPanel = $("dayPanel");
-
-  const nightKill = $("nightKill");
-  const nightSave = $("nightSave");
-  const nightCheck = $("nightCheck");
-  const doctorBox = $("doctorBox");
-  const detectiveBox = $("detectiveBox");
-
-  const btnResolveNight = $("btnResolveNight");
-  const btnClearNight = $("btnClearNight");
-  const nightResultCard = $("nightResultCard");
-  const nightResultTitle = $("nightResultTitle");
-  const nightResultDetails = $("nightResultDetails");
-
-  const dayVote = $("dayVote");
-  const btnResolveVote = $("btnResolveVote");
-  const btnClearVote = $("btnClearVote");
-
-  const sniperPanel = $("sniperPanel");
-  const sniperStatus = $("sniperStatus");
-  const sniperTarget = $("sniperTarget");
-  const btnUseSniper = $("btnUseSniper");
-
-  // ====== مساعدات ======
-  function alivePlayers() { return state.players.filter(p => p.alive); }
-  function roleCount(key) { return state.players.filter(p => p.alive && p.roleKey === key).length; }
-
-  function fillSelect(sel, players, placeholder) {
-    const cur = sel.value;
-    sel.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = placeholder;
-    sel.appendChild(opt0);
-    players.forEach(p => {
-      const opt = document.createElement("option");
-      opt.value = p.id;
-      opt.textContent = p.name;
-      sel.appendChild(opt);
-    });
-    sel.value = cur;
+  // ---------- URL join support ----------
+  // ?code=XXXXXX
+  const urlParams = new URLSearchParams(location.search);
+  const preCode = urlParams.get("code");
+  if (preCode) {
+    playerCode.value = preCode;
+    setScreen("screenPlayer");
   }
 
-  function setScreen(which) {
-    screenSetup.classList.add("hidden");
-    screenReveal.classList.add("hidden");
-    screenGame.classList.add("hidden");
-    btnHome.classList.add("hidden");
+  // ---------- Host session state ----------
+  let hostSessionCode = null;
+  let hostUnsub = null;
 
-    if (which === "setup") screenSetup.classList.remove("hidden");
-    if (which === "reveal") { screenReveal.classList.remove("hidden"); btnHome.classList.remove("hidden"); }
-    if (which === "game") { screenGame.classList.remove("hidden"); btnHome.classList.remove("hidden"); }
+  // ---------- Player session state ----------
+  let me = getIdentity(); // {sessionCode, playerId, name}
+  let playerUnsub = null;
+
+  // ================== HOST FLOW ==================
+  async function hostCreateSession(){
+    const code = code6();
+    hostSessionCode = code;
+
+    const session = {
+      code,
+      createdAt: now(),
+      status: "lobby",     // lobby | locked | playing
+      phase: "night",      // night | day
+      round: 1,
+      config: { mafiaCount: 1 },
+      log: "تم إنشاء الجلسة.",
+    };
+
+    await SESS(code).set(session);
+    await SESS(code).child("players").set({});     // players list
+    await SESS(code).child("votes").set({});       // votes per phase
+
+    hostCodeEl.textContent = code;
+    setScreen("screenHost");
+    subscribeHost(code);
   }
 
-  // ====== رسم الأدوار ======
-  function renderRoles() {
-    rolesBox.innerHTML = "";
-    ROLE_DEFS.forEach(role => {
-      const wrap = document.createElement("div");
-      wrap.className = "rounded-2xl border border-slate-800 bg-slate-950 p-3";
-      wrap.innerHTML = `
-        <div class="flex items-center justify-between gap-3">
-          <div>
-            <div class="font-extrabold">${escapeHtml(role.name)}</div>
-            <div class="text-xs text-slate-400 mt-1">${escapeHtml(role.hint)}</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button class="tap px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold" data-act="dec" data-key="${role.key}">-</button>
-            <div class="min-w-10 text-center font-extrabold text-lg" id="count_${role.key}">${state.roleCounts[role.key] ?? 0}</div>
-            <button class="tap px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold" data-act="inc" data-key="${role.key}">+</button>
-          </div>
-        </div>
-      `;
-      rolesBox.appendChild(wrap);
-    });
+  function subscribeHost(code){
+    if (hostUnsub) hostUnsub.off();
+    hostUnsub = SESS(code);
+    hostUnsub.on("value", (snap) => {
+      const s = snap.val();
+      if (!s) return;
 
-    rolesBox.querySelectorAll("button[data-act]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const key = btn.getAttribute("data-key");
-        const act = btn.getAttribute("data-act");
-        const cur = Number(state.roleCounts[key] ?? 0);
-        const next = act === "inc" ? cur + 1 : Math.max(0, cur - 1);
-        state.roleCounts[key] = next;
-        const el = $("count_" + key);
-        if (el) el.textContent = String(next);
-      });
+      hostPhase.textContent = s.phase === "night" ? "ليل 🌙" : "نهار ☀️";
+      hostRound.textContent = String(s.round || 1);
+      hostLog.textContent = s.log || "—";
+
+      // list players (without roles)
+      const players = s.players ? Object.values(s.players) : [];
+      hostPlayers.innerHTML = "";
+      if (players.length === 0){
+        hostPlayers.innerHTML = `<div class="text-slate-400 text-sm">لا يوجد لاعبين بعد.</div>`;
+      } else {
+        players.forEach(p => {
+          hostPlayers.innerHTML += `
+            <div class="flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-3 py-2">
+              <div class="font-bold">${escapeHtml(p.name)}</div>
+              <div class="text-xs px-2 py-1 rounded-xl border ${p.alive ? "border-emerald-700 bg-emerald-900/30 text-emerald-200" : "border-rose-800 bg-rose-900/20 text-rose-200"}">
+                ${p.alive ? "حي" : "ميت"}
+              </div>
+            </div>
+          `;
+        });
+      }
     });
   }
 
-  // ====== رسم اللاعبين ======
-  function renderPlayers() {
-    playersCount.textContent = String(state.players.length);
-    playersList.innerHTML = "";
+  async function hostLockAndAssign(){
+    const code = hostSessionCode;
+    if (!code) return;
 
-    if (state.players.length === 0) {
-      const empty = document.createElement("div");
-      empty.className = "text-slate-400 text-sm";
-      empty.textContent = "لا يوجد لاعبين بعد.";
-      playersList.appendChild(empty);
-      return;
-    }
+    const mafiaCount = Math.max(1, Number(hostMafia.value || 1));
+    await SESS(code).child("config/mafiaCount").set(mafiaCount);
 
-    state.players.forEach(p => {
-      const row = document.createElement("div");
-      row.className = "flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3";
-      row.innerHTML = `
-        <div class="font-bold">${escapeHtml(p.name)}</div>
-        <button class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700" data-del="${p.id}">✕</button>
-      `;
-      playersList.appendChild(row);
-    });
+    const playersSnap = await SESS(code).child("players").get();
+    const playersObj = playersSnap.val() || {};
+    const players = Object.values(playersObj);
 
-    playersList.querySelectorAll("button[data-del]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = btn.getAttribute("data-del");
-        state.players = state.players.filter(p => p.id !== id);
-        renderPlayers();
-      });
-    });
-  }
+    if (players.length < 5) { toast("ضيفوا على الأقل 5 لاعبين."); return; }
 
-  function addPlayer(name) {
-    const n = (name ?? "").trim();
-    if (!n) return;
-    if (state.players.some(p => p.name === n)) { alert("هذا الاسم موجود بالفعل."); return; }
-    state.players.push({ id: rid(), name: n, roleKey: null, roleName: null, alive: true });
-    playerName.value = "";
-    playerName.focus();
-    renderPlayers();
-  }
-
-  // ====== توزيع الأدوار ======
-  function assign() {
-    if (state.players.length < 5) { alert("ضيف على الأقل 5 لاعبين."); return; }
-
+    // Build roles list (MVP: mafia + citizens فقط)
     const roles = [];
-    for (const r of ROLE_DEFS) {
-      const c = Number(state.roleCounts[r.key] ?? 0);
-      for (let i = 0; i < c; i++) roles.push(r.key);
-    }
-    if (roles.length > state.players.length) { alert("مجموع الأدوار أكبر من عدد اللاعبين."); return; }
-    while (roles.length < state.players.length) roles.push("citizen");
+    for (let i=0;i<mafiaCount;i++) roles.push("mafia");
+    while (roles.length < players.length) roles.push("citizen");
+    const shuffledRoles = shuffle(roles);
+    const shuffledPlayers = shuffle(players);
 
-    const rolesShuffled = shuffle(roles);
-    const playersShuffled = shuffle(state.players);
-
-    playersShuffled.forEach((p, idx) => {
-      const rk = rolesShuffled[idx];
-      const def = ROLE_DEFS.find(x => x.key === rk);
-      p.roleKey = rk;
-      p.roleName = def ? def.name : (rk === "citizen" ? "مواطن" : rk);
-      p.alive = true;
+    // Assign roles BUT DO NOT expose to host UI.
+    // We store role under each player (they can read only theirs on their device by playerId)
+    const updates = {};
+    shuffledPlayers.forEach((p, idx) => {
+      updates[`players/${p.id}/role`] = shuffledRoles[idx];
+      updates[`players/${p.id}/alive`] = true;
+      updates[`players/${p.id}/ready`] = true;
     });
 
-    state.players = playersShuffled;
-    state.revealIndex = 0;
-    state.phase = "night";
-    state.round = 1;
-    state.sniperUsed = false;
+    updates["status"] = "playing";
+    updates["phase"] = "night";
+    updates["round"] = 1;
+    updates["log"] = "تم قفل اللاعبين وتوزيع الأدوار. بدأت اللعبة (ليل).";
+    updates["votes"] = {}; // reset votes
 
-    setScreen("reveal");
-    updateRevealUI();
+    await SESS(code).update(updates);
+    toast("تم توزيع الأدوار! الآن ابدأ اللعب: ليل → تصويت المافيا من جوالاتهم.");
   }
 
-  // ====== كشف سري ======
-  function updateRevealUI() {
-    const p = state.players[state.revealIndex];
-    revealPlayerName.textContent = p?.name ?? "";
-    revealIndexEl.textContent = String(state.revealIndex + 1);
-    revealTotalEl.textContent = String(state.players.length);
+  async function hostTogglePhase(){
+    const code = hostSessionCode;
+    if (!code) return;
 
-    roleCard.classList.add("hidden");
-    btnHideRole.classList.add("hidden");
-    btnShowRole.classList.remove("hidden");
+    const snap = await SESS(code).get();
+    const s = snap.val();
+    if (!s || s.status !== "playing") { toast("الجلسة غير جاهزة."); return; }
+
+    const nextPhase = s.phase === "night" ? "day" : "night";
+    const nextRound = (nextPhase === "night") ? (Number(s.round||1) + 1) : Number(s.round||1);
+
+    await SESS(code).update({
+      phase: nextPhase,
+      round: nextRound,
+      votes: {}, // reset votes each phase
+      log: `تم الانتقال إلى: ${nextPhase === "night" ? "ليل" : "نهار"} (الجولة ${nextRound}).`
+    });
   }
 
-  function showRole() {
-    const p = state.players[state.revealIndex];
-    if (!p) return;
-    roleName.textContent = p.roleName || "";
-    const def = ROLE_DEFS.find(x => x.key === p.roleKey);
-    roleHint.textContent = def?.hint || (p.roleKey === "citizen" ? "حلّل الكلام وصوّت صح." : "");
-    roleCard.classList.remove("hidden");
-    btnShowRole.classList.add("hidden");
-    btnHideRole.classList.remove("hidden");
-  }
+  async function hostResolvePhase(){
+    const code = hostSessionCode;
+    if (!code) return;
 
-  function hideRole() {
-    roleCard.classList.add("hidden");
-    btnHideRole.classList.add("hidden");
-    btnShowRole.classList.remove("hidden");
-  }
+    const snap = await SESS(code).get();
+    const s = snap.val();
+    if (!s || s.status !== "playing") { toast("الجلسة غير جاهزة."); return; }
 
-  function nextReveal() { if (state.revealIndex < state.players.length - 1) { state.revealIndex++; updateRevealUI(); } }
-  function prevReveal() { if (state.revealIndex > 0) { state.revealIndex--; updateRevealUI(); } }
+    const playersObj = s.players || {};
+    const players = Object.values(playersObj).filter(p => p.alive);
 
-  // ====== بدء اللعبة ======
-  function startGame() {
-    setScreen("game");
-    renderGame();
-  }
-
-  // ====== رسم شاشة اللعبة ======
-  function renderGame() {
-    // Phase labels
-    phaseLabel.textContent = state.phase === "night" ? "ليل 🌙" : "نهار ☀️";
-    roundLabel.textContent = String(state.round);
-    btnTogglePhase.textContent = state.phase === "night" ? "تبديل إلى النهار ☀️" : "تبديل إلى الليل 🌙";
-
-    // Panels
-    nightPanel.classList.toggle("hidden", state.phase !== "night");
-    dayPanel.classList.toggle("hidden", state.phase !== "day");
-
-    // Show/hide doctor/detective boxes if no such role exists in game
-    const hasDoctor = state.players.some(p => p.roleKey === "doctor");
-    const hasDetective = state.players.some(p => p.roleKey === "detective");
-    doctorBox.classList.toggle("hidden", !hasDoctor);
-    detectiveBox.classList.toggle("hidden", !hasDetective);
-
-    // Fill selects with alive players
-    const alive = alivePlayers();
-    fillSelect(nightKill, alive, "اختر الضحية");
-    fillSelect(nightSave, alive, "اختر من تنقذه");
-    fillSelect(nightCheck, alive, "اختر من تحقق فيه");
-    fillSelect(dayVote, alive, "اختر للتصويت عليه");
-    fillSelect(sniperTarget, alive, "اختر هدف القناص");
-
-    // Sniper
-    const hasSniperAlive = alive.some(p => p.roleKey === "sniper");
-    sniperPanel.classList.toggle("hidden", !hasSniperAlive);
-    sniperStatus.textContent = state.sniperUsed ? "تم استخدام الطلقة ✅" : "الطلقة جاهزة 🎯";
-    btnUseSniper.disabled = state.sniperUsed;
-    btnUseSniper.classList.toggle("opacity-50", state.sniperUsed);
-
-    // Players grid
-    playersGrid.innerHTML = "";
-    state.players.forEach(p => {
-      const row = document.createElement("button");
-      row.type = "button";
-      row.className =
-        "tap text-right rounded-2xl border px-4 py-3 " +
-        (p.alive ? "border-slate-800 bg-slate-950 hover:bg-slate-900" : "border-slate-900 bg-slate-950/40 opacity-60");
-      row.innerHTML = `
-        <div class="flex items-center justify-between">
-          <div class="font-extrabold">${escapeHtml(p.name)}</div>
-          <div class="text-xs px-2 py-1 rounded-xl border ${p.alive ? "border-emerald-700 bg-emerald-900/30 text-emerald-200" : "border-rose-800 bg-rose-900/20 text-rose-200"}">
-            ${p.alive ? "حي" : "ميت"}
-          </div>
-        </div>
-        <div class="mt-1 text-sm text-slate-300">
-          الدور: <span class="font-bold">${escapeHtml(p.roleName)}</span>
-        </div>
-      `;
-      row.addEventListener("click", () => {
-        // للطوارئ (المدير فقط)
-        p.alive = !p.alive;
-        renderGame();
+    if (s.phase === "night") {
+      // Night: mafia votes -> victim with max votes
+      const votes = s.votes?.night?.mafia || {};
+      const tally = {};
+      Object.values(votes).forEach(victimId => {
+        if (!victimId) return;
+        tally[victimId] = (tally[victimId] || 0) + 1;
       });
-      playersGrid.appendChild(row);
-    });
 
-    updateWinStatus();
-  }
+      const victimId = Object.entries(tally).sort((a,b)=>b[1]-a[1])[0]?.[0] || null;
+      if (!victimId) { toast("لا يوجد تصويت مافيا كافي."); return; }
 
-  // ====== منطق الفوز ======
-  function updateWinStatus() {
-    const alive = alivePlayers();
-    const mafiaAlive = alive.filter(p => p.roleKey === "mafia").length;
-    const othersAlive = alive.length - mafiaAlive;
-
-    // لو المهرّج تم إقصاؤه بالتصويت نعلن الفوز فوراً (نخزنه في winBox عند التصويت)
-    if (winBox.dataset.winner === "jester") return;
-
-    if (mafiaAlive === 0) {
-      winBox.textContent = "🏆 فاز المواطنون! (لا توجد مافيا حيّة)";
-      winBox.dataset.winner = "citizens";
-    } else if (mafiaAlive >= othersAlive) {
-      winBox.textContent = "🏆 فازت المافيا! (عددهم أصبح مساوي/أكبر من الباقين)";
-      winBox.dataset.winner = "mafia";
+      // kill victim
+      const victim = playersObj[victimId];
+      if (victim) {
+        await SESS(code).child(`players/${victimId}/alive`).set(false);
+        await SESS(code).update({
+          log: `نتيجة الليل: تم قتل لاعب (المدير يرى الاسم فقط): ${victim.name}`
+        });
+      }
     } else {
-      winBox.textContent = `المتبقي — مافيا: ${mafiaAlive} | الباقي: ${othersAlive}`;
-      winBox.dataset.winner = "";
-    }
-  }
+      // Day: public vote -> eliminated with max votes
+      const votes = s.votes?.day?.public || {};
+      const tally = {};
+      Object.values(votes).forEach(targetId => {
+        if (!targetId) return;
+        tally[targetId] = (tally[targetId] || 0) + 1;
+      });
 
-  // ====== تنفيذ الليل ======
-  function resolveNight() {
-    const killId = nightKill.value || "";
-    if (!killId) { alert("اختيار المافيا (الضحية) مطلوب."); return; }
+      const outId = Object.entries(tally).sort((a,b)=>b[1]-a[1])[0]?.[0] || null;
+      if (!outId) { toast("لا يوجد تصويت نهار كافي."); return; }
 
-    const saveId = nightSave.value || "";
-    const checkId = nightCheck.value || "";
-
-    const victim = state.players.find(p => p.id === killId);
-    const saved = saveId && killId === saveId;
-
-    if (victim && victim.alive && !saved) victim.alive = false;
-
-    let detectiveInfo = "";
-    if (checkId) {
-      const checked = state.players.find(p => p.id === checkId);
-      if (checked) {
-        detectiveInfo = `نتيجة التحقيق (للمدير): ${checked.name} = ${checked.roleKey === "mafia" ? "مافيا 🟥" : "ليس مافيا 🟩"}`;
+      const out = playersObj[outId];
+      if (out) {
+        await SESS(code).child(`players/${outId}/alive`).set(false);
+        await SESS(code).update({
+          log: `نتيجة النهار: تم إقصاء لاعب: ${out.name}`
+        });
       }
     }
 
-    nightResultCard.classList.remove("hidden");
-    nightResultTitle.textContent = saved ? "✅ الطبيب أنقذ الضحية!" : "❌ تم قتل لاعب الليلة!";
-    nightResultDetails.textContent =
-      `${victim ? `الضحية: ${victim.name}. ` : ""}` +
-      (saved ? "لم يمت أحد. " : "") +
-      (detectiveInfo ? `| ${detectiveInfo}` : "");
-
-    updateWinStatus();
-    renderGame();
+    toast("تم تنفيذ النتيجة.");
   }
 
-  function clearNight() {
-    nightKill.value = "";
-    nightSave.value = "";
-    nightCheck.value = "";
-    nightResultCard.classList.add("hidden");
+  function hostCopyJoinLink(){
+    if (!hostSessionCode) return;
+    const url = `${location.origin}${location.pathname}?code=${hostSessionCode}`;
+    navigator.clipboard?.writeText(url);
+    toast("تم نسخ رابط الدخول.");
   }
 
-  // ====== التصويت بالنهار ======
-  function resolveVote() {
-    const voteId = dayVote.value || "";
-    if (!voteId) { alert("اختر لاعب للتصويت عليه."); return; }
+  // ================== PLAYER FLOW ==================
+  async function playerJoin(){
+    const code = String(playerCode.value || "").trim();
+    const name = String(playerName.value || "").trim();
 
-    const target = state.players.find(p => p.id === voteId);
-    if (target && target.alive) target.alive = false;
+    if (!/^\d{6}$/.test(code)) { toast("اكتب كود صحيح (6 أرقام)."); return; }
+    if (!name) { toast("اكتب اسمك."); return; }
 
-    // مهرّج: إذا تم إقصاؤه بالتصويت → يفوز وحده فورًا
-    if (target && target.roleKey === "jester") {
-      winBox.textContent = "🤡🏆 فاز المهرّج وحده! (تم إقصاؤه بالتصويت)";
-      winBox.dataset.winner = "jester";
-      alert("فاز المهرّج وحده! انتهت اللعبة.");
-    }
+    const sessionSnap = await SESS(code).get();
+    const s = sessionSnap.val();
+    if (!s) { toast("الجلسة غير موجودة."); return; }
+    if (s.status === "locked") { toast("الجلسة مقفلة."); return; }
 
-    dayVote.value = "";
-    updateWinStatus();
-    renderGame();
+    // create player id for this device
+    const playerId = rid();
+    me = { sessionCode: code, playerId, name };
+    setIdentity(me);
+
+    await SESS(code).child(`players/${playerId}`).set({
+      id: playerId,
+      name,
+      alive: true,
+      role: null,   // assigned later
+      joinedAt: now(),
+      ready: false
+    });
+
+    showPlayerAfterJoin();
+    subscribePlayer(code, playerId);
   }
 
-  function clearVote() { dayVote.value = ""; }
+  function showPlayerAfterJoin(){
+    playerAfterJoin.classList.remove("hidden");
+    pName.textContent = me.name;
+    pCode.textContent = me.sessionCode;
 
-  // ====== القناص ======
-  function useSniper() {
-    if (state.sniperUsed) return;
-    const alive = alivePlayers();
-    const sniperAlive = alive.some(p => p.roleKey === "sniper");
-    if (!sniperAlive) { alert("لا يوجد قناص حي."); return; }
-
-    const tid = sniperTarget.value || "";
-    if (!tid) { alert("اختر هدف القناص."); return; }
-
-    const target = state.players.find(p => p.id === tid);
-    if (target && target.alive) target.alive = false;
-
-    state.sniperUsed = true;
-    alert(`🎯 القناص أطلق طلقة على: ${target ? target.name : "الهدف"}`);
-
-    updateWinStatus();
-    renderGame();
+    // Hide role
+    myRoleCard.classList.add("hidden");
+    btnHideMyRole.classList.add("hidden");
+    btnRevealMyRole.classList.remove("hidden");
   }
 
-  // ====== تبديل المرحلة ======
-  function togglePhase() {
-    if (winBox.dataset.winner) {
-      alert("اللعبة منتهية. ابدأ لعبة جديدة عبر إعادة الضبط.");
+  function subscribePlayer(code, playerId){
+    if (playerUnsub) playerUnsub.off();
+    playerUnsub = SESS(code);
+    playerUnsub.on("value", (snap) => {
+      const s = snap.val();
+      if (!s) return;
+
+      const p = s.players?.[playerId];
+      if (!p) return;
+
+      pPhase.textContent = s.phase === "night" ? "ليل 🌙" : "نهار ☀️";
+      pRound.textContent = String(s.round || 1);
+
+      // render action UI depending on phase & role
+      renderPlayerActions(s, p);
+    });
+  }
+
+  function renderPlayerActions(session, player){
+    const alivePlayers = Object.values(session.players || {}).filter(x => x.alive);
+
+    // if dead => no actions
+    if (!player.alive) {
+      pActionBox.innerHTML = `<div class="text-center text-slate-300">أنت خارج اللعبة ❌</div>`;
       return;
     }
 
-    if (state.phase === "night") {
-      state.phase = "day";
-      // في العادة بعد تنفيذ الليل، لكن نخليها مرنة
-    } else {
-      state.phase = "night";
-      state.round += 1;
-      clearNight();
+    // waiting for role assignment
+    if (!player.role) {
+      pActionBox.innerHTML = `<div class="text-center text-slate-300">بانتظار توزيع الأدوار من المدير…</div>`;
+      return;
     }
-    renderGame();
+
+    // NIGHT: mafia vote only (MVP)
+    if (session.phase === "night") {
+      if (player.role !== "mafia") {
+        pActionBox.innerHTML = `<div class="text-center text-slate-300">ليل… انتظر (تصويت المافيا فقط).</div>`;
+        return;
+      }
+
+      // Mafia voting UI
+      const options = alivePlayers.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+      pActionBox.innerHTML = `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 space-y-2">
+          <div class="font-extrabold">تصويت المافيا (قتل)</div>
+          <select id="mafiaVoteSel"
+            class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+            <option value="">اختر الضحية</option>
+            ${options}
+          </select>
+          <button id="btnMafiaVote"
+            class="tap w-full px-4 py-4 rounded-2xl bg-rose-600 hover:bg-rose-500 font-extrabold">
+            إرسال التصويت
+          </button>
+          <div class="text-xs text-slate-400">تصويتك لا يظهر لأحد.</div>
+        </div>
+      `;
+
+      const btn = $("btnMafiaVote");
+      btn.addEventListener("click", async () => {
+        const victimId = $("mafiaVoteSel").value || "";
+        if (!victimId) return toast("اختر الضحية.");
+        await SESS(me.sessionCode).child(`votes/night/mafia/${me.playerId}`).set(victimId);
+        toast("تم تسجيل تصويتك.");
+      });
+      return;
+    }
+
+    // DAY: public vote for all alive
+    if (session.phase === "day") {
+      const options = alivePlayers.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+      pActionBox.innerHTML = `
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 space-y-2">
+          <div class="font-extrabold">تصويت النهار (إقصاء)</div>
+          <select id="dayVoteSel"
+            class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+            <option value="">اختر الشخص</option>
+            ${options}
+          </select>
+          <button id="btnDayVote"
+            class="tap w-full px-4 py-4 rounded-2xl bg-amber-600 hover:bg-amber-500 font-extrabold">
+            إرسال التصويت
+          </button>
+          <div class="text-xs text-slate-400">هذا التصويت يحدد الإقصاء عند تنفيذ المدير.</div>
+        </div>
+      `;
+
+      const btn = $("btnDayVote");
+      btn.addEventListener("click", async () => {
+        const targetId = $("dayVoteSel").value || "";
+        if (!targetId) return toast("اختر شخص.");
+        await SESS(me.sessionCode).child(`votes/day/public/${me.playerId}`).set(targetId);
+        toast("تم تسجيل تصويتك.");
+      });
+      return;
+    }
   }
 
-  // ====== إعادة ضبط ======
-  function resetAll() {
-    if (!confirm("متأكد؟ سيتم حذف كل شيء.")) return;
-    state.players = [];
-    state.roleCounts = Object.fromEntries(ROLE_DEFS.map(r => [r.key, r.defaultCount]));
-    state.revealIndex = 0;
-    state.phase = "night";
-    state.round = 1;
-    state.sniperUsed = false;
-    winBox.dataset.winner = "";
-    playerName.value = "";
-    renderRoles();
-    renderPlayers();
-    setScreen("setup");
+  function revealMyRole(){
+    if (!me) return;
+    SESS(me.sessionCode).child(`players/${me.playerId}/role`).get().then(snap => {
+      const role = snap.val();
+      if (!role) return toast("بانتظار توزيع الأدوار من المدير.");
+      myRoleText.textContent = role === "mafia" ? "مافيا" : "مواطن";
+      myRoleHint.textContent = ROLE_HINT[role] || "—";
+      myRoleCard.classList.remove("hidden");
+      btnRevealMyRole.classList.add("hidden");
+      btnHideMyRole.classList.remove("hidden");
+    });
+  }
+  function hideMyRole(){
+    myRoleCard.classList.add("hidden");
+    btnHideMyRole.classList.add("hidden");
+    btnRevealMyRole.classList.remove("hidden");
   }
 
-  // ====== أحداث ======
-  $("btnAddPlayer").addEventListener("click", () => addPlayer(playerName.value));
-  playerName.addEventListener("keydown", (e) => { if (e.key === "Enter") addPlayer(playerName.value); });
+  // ================== Buttons wiring ==================
+  btnGoHost.addEventListener("click", hostCreateSession);
+  btnGoPlayer.addEventListener("click", () => setScreen("screenPlayer"));
 
-  btnAddSample.addEventListener("click", () => {
-    ["عبدالله","سارة","فهد","نوف","محمد","ريم","تركي","لمى"].forEach(addPlayer);
+  btnCopyJoin.addEventListener("click", hostCopyJoinLink);
+  btnHostLockAndAssign.addEventListener("click", hostLockAndAssign);
+  btnHostTogglePhase.addEventListener("click", hostTogglePhase);
+  btnHostResolve.addEventListener("click", hostResolvePhase);
+
+  btnPlayerJoin.addEventListener("click", playerJoin);
+
+  btnRevealMyRole.addEventListener("click", revealMyRole);
+  btnHideMyRole.addEventListener("click", hideMyRole);
+
+  $("btnBackMode1").addEventListener("click", () => setScreen("screenMode"));
+  $("btnBackMode2").addEventListener("click", () => setScreen("screenMode"));
+
+  btnResetLocal.addEventListener("click", () => {
+    clearIdentity();
+    toast("تم مسح بيانات هذا الجهاز.");
+    location.href = location.pathname; // remove query
   });
 
-  btnAssignRoles.addEventListener("click", assign);
-
-  btnShowRole.addEventListener("click", showRole);
-  btnHideRole.addEventListener("click", hideRole);
-  btnNextReveal.addEventListener("click", nextReveal);
-  btnPrevReveal.addEventListener("click", prevReveal);
-
-  btnStartGame.addEventListener("click", startGame);
-  btnGoBackSetup.addEventListener("click", () => setScreen("setup"));
-
-  btnResolveNight.addEventListener("click", resolveNight);
-  btnClearNight.addEventListener("click", clearNight);
-
-  btnResolveVote.addEventListener("click", resolveVote);
-  btnClearVote.addEventListener("click", clearVote);
-
-  btnUseSniper.addEventListener("click", useSniper);
-
-  btnTogglePhase.addEventListener("click", togglePhase);
-
-  btnHome.addEventListener("click", () => setScreen("setup"));
-  btnResetAll.addEventListener("click", resetAll);
-
-  // ====== بدء ======
-  renderRoles();
-  renderPlayers();
-  setScreen("setup");
+  // ================== Auto-resume if player already joined ==================
+  if (me?.sessionCode && me?.playerId) {
+    setScreen("screenPlayer");
+    playerAfterJoin.classList.remove("hidden");
+    pName.textContent = me.name;
+    pCode.textContent = me.sessionCode;
+    subscribePlayer(me.sessionCode, me.playerId);
+  } else {
+    setScreen("screenMode");
+  }
 })();
 </script>
 </body>
