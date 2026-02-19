@@ -172,15 +172,94 @@
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <RoleCard title="🎯 قناص" idOn="roleSniperOn" idCount="roleSniperCount" checked="checked" />
-            <RoleCard title="🤡 مهرّج" idOn="roleJesterOn" idCount="roleJesterCount" checked="checked" />
-            <RoleCard title="🩺 طبيب" idOn="roleDoctorOn" idCount="roleDoctorCount" />
-            <RoleCard title="🔎 محقق" idOn="roleDetectiveOn" idCount="roleDetectiveCount" />
-            <RoleCard title="🛡️ حارس" idOn="roleBodyguardOn" idCount="roleBodyguardCount" />
-            <RoleCard title="🔪 قاتل متسلسل" idOn="roleSerialOn" idCount="roleSerialCount" />
-            <RoleCard title="🧪 ساحرة" idOn="roleWitchOn" idCount="roleWitchCount" />
-            <RoleCard title="👑 عمدة" idOn="roleMayorOn" idCount="roleMayorCount" />
-          </div>
+            
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🎯 قناص</span>
+                <input id="roleSniperOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleSniperCount" type="number" min="0" max="10" value="1"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                 />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🤡 مهرّج</span>
+                <input id="roleJesterOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleJesterCount" type="number" min="0" max="10" value="1"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                 />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🩺 طبيب</span>
+                <input id="roleDoctorOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleDoctorCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🔎 محقق</span>
+                <input id="roleDetectiveOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleDetectiveCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🛡️ حارس</span>
+                <input id="roleBodyguardOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleBodyguardCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🔪 قاتل متسلسل</span>
+                <input id="roleSerialOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleSerialCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🧪 ساحرة</span>
+                <input id="roleWitchOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleWitchCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">👑 عمدة</span>
+                <input id="roleMayorOn" type="checkbox"  class="h-5 w-5 accent-sky-500">
+              </label>
+              <input id="roleMayorCount" type="number" min="0" max="10" value="0"
+                class="no-spin mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                disabled />
+            </div>
+    </div>
 
           <div class="text-xs text-slate-400 leading-6">
             • الطبيب: يختار شخصًا لإنقاذه (ليل).<br>
@@ -464,7 +543,28 @@
   const roleBodyguardCount = $("roleBodyguardCount");
   const roleSerialCount = $("roleSerialCount");
   const roleWitchCount = $("roleWitchCount");
-  const roleMayorCount = $("roleMayorCount");
+  const roleMayorCount = \$\("roleMayorCount"\);
+
+  // تفعيل/تعطيل عداد كل دور حسب خيار التفعيل (لتفادي مشاكل الشكل/القيم)
+  function wireRoleCountToggle(idOn, idCount){
+    const onEl = $(idOn); const cntEl = $(idCount);
+    if (!onEl || !cntEl) return;
+    const sync = () => {
+      if (onEl.checked){
+        cntEl.disabled = false;
+        if (Number(cntEl.value || 0) <= 0) cntEl.value = 1;
+      } else {
+        cntEl.value = 0;
+        cntEl.disabled = true;
+      }
+    };
+    onEl.addEventListener("change", sync);
+    sync();
+  }
+  ["Sniper","Jester","Doctor","Detective","Bodyguard","Serial","Witch","Mayor"].forEach(k=>{
+    wireRoleCountToggle(`role${k}On`, `role${k}Count`);
+  });
+
 
   const btnCreateSession = $("btnCreateSession");
   const btnBackFromCreate = $("btnBackFromCreate");
