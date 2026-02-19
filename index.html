@@ -43,8 +43,8 @@
       <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5 shadow">
         <h1 class="text-2xl font-extrabold">جلسة مشتركة</h1>
         <p class="text-slate-300 text-sm mt-2 leading-6">
-          <span class="font-bold text-slate-100">المدير:</span> أنت فقط تدير المراحل وتنفيذ النتائج (بدون رؤية الأدوار).<br>
-          <span class="font-bold text-slate-100">اللاعب:</span> كل شخص يدخل من جواله ويشوف دوره فقط ويصوّت حسب المرحلة.
+          <span class="font-bold text-slate-100">المدير:</span> يدير المراحل وتنفيذ النتائج (بدون رؤية الأدوار).<br>
+          <span class="font-bold text-slate-100">اللاعب:</span> كل شخص يشوف دوره فقط ويصوّت/يتصرف حسب المرحلة.
         </p>
       </div>
 
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
+      <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-4">
         <h2 class="font-extrabold text-lg">الإعدادات</h2>
 
         <div class="grid grid-cols-2 gap-2">
@@ -96,14 +96,7 @@
             <input id="hostMafia" type="number" min="1" value="1"
               class="mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
           </div>
-          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
-            <div class="text-xs text-slate-300">الأدوار الإضافية</div>
-            <div class="text-sm text-slate-200 mt-1">🎯 قناص (1)</div>
-            <div class="text-sm text-slate-200">🤡 مهرّج (1)</div>
-          </div>
-        </div>
 
-        <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-sm text-slate-300">حل التعادل</label>
             <select id="hostTieMode"
@@ -112,9 +105,87 @@
               <option value="random">اختيار عشوائي</option>
             </select>
           </div>
-          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
-            <div class="text-xs text-slate-300">ملاحظة</div>
-            <div class="text-sm text-slate-200 mt-1">التعادل ينطبق على الليل والنهار.</div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="font-extrabold">الأدوار (تفعيل/إلغاء + عدد)</div>
+            <div class="text-xs text-slate-400">الباقي يصبح “مواطن”</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🎯 قناص</span>
+                <input id="roleSniperOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleSniperCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🤡 مهرّج</span>
+                <input id="roleJesterOn" type="checkbox" checked class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleJesterCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🩺 طبيب</span>
+                <input id="roleDoctorOn" type="checkbox" class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleDoctorCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🔎 محقق</span>
+                <input id="roleDetectiveOn" type="checkbox" class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleDetectiveCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🛡️ حارس</span>
+                <input id="roleBodyguardOn" type="checkbox" class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleBodyguardCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <label class="flex items-center justify-between gap-2">
+                <span class="font-bold">🔪 قاتل متسلسل</span>
+                <input id="roleSerialOn" type="checkbox" class="h-5 w-5 accent-sky-500">
+              </label>
+              <div class="mt-2">
+                <input id="roleSerialCount" type="number" min="0" max="3" value="1"
+                  class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 leading-6">
+            • الطبيب: يختار شخصًا لإنقاذه (ليل).<br>
+            • المحقق: يحقق ويظهر له فقط “مافيا/ليس مافيا” (ليل).<br>
+            • الحارس: يحمي شخصًا؛ إذا هاجمت المافيا هدفه يموت الحارس بدلًا عنه (ليل).<br>
+            • القاتل المتسلسل: يقتل شخصًا (ليل) وهو طرف مستقل (يفوز إذا بقي لوحده).
           </div>
         </div>
 
@@ -166,7 +237,7 @@
                 class="mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
             </div>
             <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-3 text-xs text-slate-300 leading-6">
-              ابدأ المؤقت ثم عند انتهائه نفّذ النتيجة. (المؤقت لا ينفّذ تلقائيًا حفاظًا على التحكم)
+              ابدأ المؤقت ثم عند انتهائه نفّذ النتيجة.
             </div>
           </div>
 
@@ -255,6 +326,10 @@
           <div id="myRoleCard" class="hidden rounded-2xl border border-slate-800 bg-slate-950 p-4">
             <div id="myRoleText" class="text-3xl font-extrabold">—</div>
             <div id="myRoleHint" class="text-sm text-slate-300 mt-2 leading-6">—</div>
+            <div id="roleExtraBox" class="mt-3 hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+              <div class="text-xs text-slate-300">معلومة خاصة</div>
+              <div id="roleExtraText" class="mt-1 font-bold">—</div>
+            </div>
           </div>
 
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
@@ -280,7 +355,6 @@
 
 <script>
 (() => {
-  // ✅ Firebase config (من عندك)
   const firebaseConfig = {
     apiKey: "AIzaSyC4YdqgiAfJmRmvkLH4wspzclAzKs3wyLw",
     authDomain: "mafia-game-7e488.firebaseapp.com",
@@ -295,17 +369,11 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // Helpers
   const rid = () => (crypto?.getRandomValues ? [...crypto.getRandomValues(new Uint32Array(2))].map(x=>x.toString(16)).join("") : String(Math.random()).slice(2));
   const now = () => Date.now();
   const code6 = () => String(Math.floor(100000 + Math.random() * 900000));
   const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
-  const shuffle = (arr) => {
-    const a = arr.slice();
-    for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
-    return a;
-  };
-
+  const shuffle = (arr) => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
   const normName = (s) => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
 
   function fmtLeft(ms){
@@ -317,10 +385,7 @@
 
   function tallyText(votesObj){
     const tally = {};
-    Object.values(votesObj || {}).forEach(id => {
-      if (!id) return;
-      tally[id] = (tally[id] || 0) + 1;
-    });
+    Object.values(votesObj || {}).forEach(id => { if (!id) return; tally[id] = (tally[id] || 0) + 1; });
     const total = Object.keys(votesObj || {}).length;
     const arr = Object.entries(tally).sort((a,b)=>b[1]-a[1]);
     if (total === 0) return "لا توجد أصوات بعد.";
@@ -330,10 +395,7 @@
 
   function getTopCandidates(votes){
     const tally = {};
-    Object.values(votes || {}).forEach(id => {
-      if (!id) return;
-      tally[id] = (tally[id] || 0) + 1;
-    });
+    Object.values(votes || {}).forEach(id => { if (!id) return; tally[id] = (tally[id] || 0) + 1; });
     const entries = Object.entries(tally).sort((a,b)=>b[1]-a[1]);
     if (!entries.length) return { max: 0, candidates: [] };
     const max = entries[0][1];
@@ -341,26 +403,24 @@
     return { max, candidates };
   }
 
-  const LS_KEY = "mafia_identity_v4";
+  const LS_KEY = "mafia_identity_v5_roles";
   const getMe = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch { return null; } };
   const setMe = (o) => localStorage.setItem(LS_KEY, JSON.stringify(o));
   const clearMe = () => localStorage.removeItem(LS_KEY);
 
   const SESS = (code) => db.ref(`sessions/${code}`);
 
-  // UI
+  // UI refs
   const badgeMini = $("badgeMini");
   const btnCopyShare = $("btnCopyShare");
   const btnResetLocal = $("btnResetLocal");
-
   const screenMode = $("screenMode");
   const screenHost = $("screenHost");
   const screenPlayer = $("screenPlayer");
-
   const btnGoHost = $("btnGoHost");
   const btnGoPlayer = $("btnGoPlayer");
 
-  // Host
+  // Host refs
   const hostCodeEl = $("hostCode");
   const btnCopyJoin = $("btnCopyJoin");
   const hostStatus = $("hostStatus");
@@ -378,14 +438,28 @@
   const hostLog = $("hostLog");
   const btnBackMode1 = $("btnBackMode1");
 
-  // Timer host UI
+  // Roles controls
+  const roleSniperOn = $("roleSniperOn");
+  const roleJesterOn = $("roleJesterOn");
+  const roleDoctorOn = $("roleDoctorOn");
+  const roleDetectiveOn = $("roleDetectiveOn");
+  const roleBodyguardOn = $("roleBodyguardOn");
+  const roleSerialOn = $("roleSerialOn");
+  const roleSniperCount = $("roleSniperCount");
+  const roleJesterCount = $("roleJesterCount");
+  const roleDoctorCount = $("roleDoctorCount");
+  const roleDetectiveCount = $("roleDetectiveCount");
+  const roleBodyguardCount = $("roleBodyguardCount");
+  const roleSerialCount = $("roleSerialCount");
+
+  // Timer
   const hostTimerText = $("hostTimerText");
   const hostPhaseSeconds = $("hostPhaseSeconds");
   const btnTimerStart = $("btnTimerStart");
   const btnTimerStop = $("btnTimerStop");
   const btnTimerReset = $("btnTimerReset");
 
-  // Player
+  // Player refs
   const joinBox = $("joinBox");
   const playerBox = $("playerBox");
   const playerCode = $("playerCode");
@@ -401,26 +475,30 @@
   const myRoleCard = $("myRoleCard");
   const myRoleText = $("myRoleText");
   const myRoleHint = $("myRoleHint");
+  const roleExtraBox = $("roleExtraBox");
+  const roleExtraText = $("roleExtraText");
   const myVoteStatus = $("myVoteStatus");
   const liveTally = $("liveTally");
   const pActionBox = $("pActionBox");
   const btnBackMode2 = $("btnBackMode2");
 
-  // Role names/hints
   const ROLE_UI = {
     mafia: { name:"مافيا", hint:"بالليل: صوّت لقتل لاعب. بالنهار: حاول ما تنكشف." },
     citizen: { name:"مواطن", hint:"بالنهار: صوّت صح. بالليل: انتظر." },
-    sniper: { name:"قناص", hint:"🎯 طلقة واحدة طوال اللعبة (في النهار). اختر الهدف بعناية." },
+    sniper: { name:"قناص", hint:"🎯 طلقة واحدة طوال اللعبة (بالنهار). اختيارك سري." },
     jester: { name:"مهرّج", hint:"🤡 هدفك يتم إقصاؤك بالتصويت في النهار لتفوز وحدك فورًا." },
+    doctor: { name:"طبيب", hint:"🩺 بالليل: اختر لاعبًا لإنقاذه من القتل." },
+    detective: { name:"محقق", hint:"🔎 بالليل: اختر لاعبًا للتحقيق (يظهر لك: مافيا/ليس مافيا)." },
+    bodyguard: { name:"حارس", hint:"🛡️ بالليل: اختر لاعبًا لتحميه. إذا هاجمته المافيا تموت أنت بدلًا عنه." },
+    serial: { name:"قاتل متسلسل", hint:"🔪 بالليل: اختر لاعبًا لقتله. هدفك تبقى آخر شخص حي." }
   };
 
   // State
   let hostCode = null;
   let hostSub = null;
   let playerSub = null;
-  let me = getMe(); // {mode:"host"|"player", code, pid, name}
+  let me = getMe();
 
-  // Screen
   function setScreen(which){
     screenMode.classList.add("hidden");
     screenHost.classList.add("hidden");
@@ -448,7 +526,7 @@
     alert("تم نسخ رابط الدخول.");
   }
 
-  // URL join ?code=
+  // URL join
   const urlParams = new URLSearchParams(location.search);
   const preCode = urlParams.get("code");
   if (preCode && !me) {
@@ -456,13 +534,10 @@
     playerCode.value = preCode;
   }
 
-  // ---------------- Timer actions ----------------
+  // Timer helpers
   async function timerStart(code){
     const seconds = Math.max(15, Number(hostPhaseSeconds?.value || 120));
-    await SESS(code).update({
-      "config/phaseSeconds": seconds,
-      "config/timer": { running: true, endAt: now() + seconds * 1000 }
-    });
+    await SESS(code).update({ "config/phaseSeconds": seconds, "config/timer": { running: true, endAt: now() + seconds * 1000 } });
   }
   async function timerStop(code){
     await SESS(code).update({ "config/timer": { running: false, endAt: 0 } });
@@ -474,7 +549,7 @@
     await SESS(code).update({ "config/timer": { running: false, endAt: now() + seconds * 1000 } });
   }
 
-  // ---------------- HOST ----------------
+  // Create session
   async function createSession(){
     const code = code6();
     hostCode = code;
@@ -482,21 +557,32 @@
     await SESS(code).set({
       code,
       createdAt: now(),
-      status: "lobby",      // lobby | playing
-      phase: "night",       // night | day
+      status: "lobby",
+      phase: "night",
       round: 1,
       config: {
         mafiaCount: 1,
-        sniperCount: 1,
-        jesterCount: 1,
-        sniperUsed: false,
         phaseSeconds: 120,
         timer: { running: false, endAt: 0 },
-        tieMode: "revote" // revote | random
+        tieMode: "revote",
+        roles: {
+          sniper: { on: true, count: 1 },
+          jester: { on: true, count: 1 },
+          doctor: { on: false, count: 1 },
+          detective: { on: false, count: 1 },
+          bodyguard: { on: false, count: 1 },
+          serial: { on: false, count: 1 }
+        },
+        sniperUsedBy: {}
       },
-      winner: "",           // "", "mafia", "citizens", "jester"
+      winner: "",
       log: "تم إنشاء الجلسة.",
-      votes: { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} }
+      votes: {
+        night: { mafia:{}, doctor:{}, detective:{}, bodyguard:{}, serial:{} },
+        day: { public:{} },
+        dayExtra: { sniper:{} }
+      },
+      private: { detectiveResults:{} }
     });
     await SESS(code).child("players").set({});
 
@@ -510,10 +596,13 @@
 
   function computeWinner(players){
     const alive = players.filter(p => p.alive);
+    if (alive.length === 0) return "";
     const mafiaAlive = alive.filter(p => p.role === "mafia").length;
-    const others = alive.length - mafiaAlive;
-    if (mafiaAlive === 0) return "citizens";
-    if (mafiaAlive >= others) return "mafia";
+    const serialAlive = alive.filter(p => p.role === "serial").length;
+
+    if (alive.length === 1 && alive[0].role === "serial") return "serial";
+    if (mafiaAlive === 0 && serialAlive === 0) return "citizens";
+    if (mafiaAlive > 0 && mafiaAlive >= (alive.length - mafiaAlive)) return "mafia";
     return "";
   }
 
@@ -529,26 +618,40 @@
       hostPhase.textContent = s.phase === "night" ? "ليل 🌙" : "نهار ☀️";
       hostRound.textContent = String(s.round || 1);
       hostLog.textContent = s.log || "—";
-      hostWinner.textContent = s.winner ? (s.winner === "jester" ? "🤡 المهرّج" : s.winner === "mafia" ? "🟥 المافيا" : "🟩 المواطنون") : "—";
+      hostWinner.textContent = s.winner ? (
+        s.winner === "jester" ? "🤡 المهرّج" :
+        s.winner === "serial" ? "🔪 القاتل المتسلسل" :
+        s.winner === "mafia" ? "🟥 المافيا" : "🟩 المواطنون"
+      ) : "—";
 
       if (hostPhaseSeconds) hostPhaseSeconds.value = String(s.config?.phaseSeconds || 120);
       if (hostTieMode) hostTieMode.value = String(s.config?.tieMode || "revote");
 
-      // Timer text
-      const t = s.config?.timer || { running:false, endAt:0 };
-      if (hostTimerText) {
-        hostTimerText.textContent = t.running ? fmtLeft((t.endAt || 0) - now()) : "متوقف";
-      }
+      // roles sync
+      const rc = s.config?.roles || {};
+      const setRoleUI = (onEl, cntEl, key, defOn, defCnt) => {
+        const v = rc[key] || { on: defOn, count: defCnt };
+        if (onEl) onEl.checked = !!v.on;
+        if (cntEl) cntEl.value = String(v.count ?? defCnt);
+      };
+      setRoleUI(roleSniperOn, roleSniperCount, "sniper", true, 1);
+      setRoleUI(roleJesterOn, roleJesterCount, "jester", true, 1);
+      setRoleUI(roleDoctorOn, roleDoctorCount, "doctor", false, 1);
+      setRoleUI(roleDetectiveOn, roleDetectiveCount, "detective", false, 1);
+      setRoleUI(roleBodyguardOn, roleBodyguardCount, "bodyguard", false, 1);
+      setRoleUI(roleSerialOn, roleSerialCount, "serial", false, 1);
 
-      // players list (roles hidden)
+      const t = s.config?.timer || { running:false, endAt:0 };
+      if (hostTimerText) hostTimerText.textContent = t.running ? fmtLeft((t.endAt || 0) - now()) : "متوقف";
+
+      // players
       const playersObj = s.players || {};
       const players = Object.values(playersObj);
       hostCount.textContent = String(players.length || 0);
 
       hostPlayers.innerHTML = "";
-      if (players.length === 0) {
-        hostPlayers.innerHTML = `<div class="text-slate-400 text-sm">لا يوجد لاعبين بعد.</div>`;
-      } else {
+      if (players.length === 0) hostPlayers.innerHTML = `<div class="text-slate-400 text-sm">لا يوجد لاعبين بعد.</div>`;
+      else {
         players.forEach(p => {
           hostPlayers.innerHTML += `
             <div class="flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-3 py-2">
@@ -556,12 +659,11 @@
               <div class="text-xs px-2 py-1 rounded-xl border ${p.alive ? "border-emerald-700 bg-emerald-900/30 text-emerald-200" : "border-rose-800 bg-rose-900/20 text-rose-200"}">
                 ${p.alive ? "حي" : "ميت"}
               </div>
-            </div>
-          `;
+            </div>`;
         });
       }
 
-      // vote completion info (counts only, but strict completeness enforced on resolve)
+      // completion info
       const aliveAll = players.filter(x => x.alive);
       const aliveMafia = aliveAll.filter(x => x.role === "mafia");
       if (s.phase === "night") {
@@ -574,6 +676,19 @@
     });
   }
 
+  function readRoleConfigFromUI(){
+    const clampInt = (x, lo, hi) => Math.max(lo, Math.min(hi, Number(x || 0)));
+    const mk = (onEl, cntEl) => ({ on: !!onEl?.checked, count: clampInt(cntEl?.value, 0, 20) });
+    return {
+      sniper: mk(roleSniperOn, roleSniperCount),
+      jester: mk(roleJesterOn, roleJesterCount),
+      doctor: mk(roleDoctorOn, roleDoctorCount),
+      detective: mk(roleDetectiveOn, roleDetectiveCount),
+      bodyguard: mk(roleBodyguardOn, roleBodyguardCount),
+      serial: mk(roleSerialOn, roleSerialCount)
+    };
+  }
+
   async function lockAndAssign(){
     if (!hostCode) return;
 
@@ -581,21 +696,32 @@
     const s = snap.val();
     const playersObj = s?.players || {};
     const players = Object.values(playersObj);
-
     if (players.length < 5) return alert("لازم 5 لاعبين على الأقل.");
 
     const mafiaCount = Math.max(1, Number(hostMafia.value || 1));
     const tieMode = String(hostTieMode?.value || "revote");
-    await SESS(hostCode).update({ "config/mafiaCount": mafiaCount, "config/tieMode": tieMode });
+    const rolesCfg = readRoleConfigFromUI();
 
-    // Roles: mafia + sniper(1) + jester(1) + rest citizens
+    await SESS(hostCode).update({ "config/mafiaCount": mafiaCount, "config/tieMode": tieMode, "config/roles": rolesCfg });
+
     const roles = [];
     for (let i=0;i<mafiaCount;i++) roles.push("mafia");
-    roles.push("sniper");
-    roles.push("jester");
 
-    if (roles.length > players.length) return alert("عدد الأدوار أكبر من عدد اللاعبين.");
+    const addRole = (key) => {
+      const r = rolesCfg[key];
+      if (!r?.on) return;
+      const cnt = Math.max(0, Number(r.count || 0));
+      for (let i=0;i<cnt;i++) roles.push(key);
+    };
 
+    addRole("sniper");
+    addRole("jester");
+    addRole("doctor");
+    addRole("detective");
+    addRole("bodyguard");
+    addRole("serial");
+
+    if (roles.length > players.length) return alert(`الأدوار أكثر من اللاعبين. الأدوار=${roles.length} اللاعبين=${players.length}`);
     while (roles.length < players.length) roles.push("citizen");
 
     const rolesShuffled = shuffle(roles);
@@ -612,13 +738,14 @@
     updates["phase"] = "night";
     updates["round"] = 1;
     updates["winner"] = "";
-    updates["config/sniperUsed"] = false;
     updates["config/timer"] = { running:false, endAt:0 };
-    updates["votes"] = { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} };
-    updates["log"] = "تم توزيع الأدوار. بدأت اللعبة: ليل 🌙 (تصويت المافيا).";
+    updates["config/sniperUsedBy"] = {};
+    updates["votes"] = { night: { mafia:{}, doctor:{}, detective:{}, bodyguard:{}, serial:{} }, day: { public:{} }, dayExtra: { sniper:{} } };
+    updates["private/detectiveResults"] = {};
+    updates["log"] = "تم توزيع الأدوار. بدأت اللعبة: ليل 🌙";
 
     await SESS(hostCode).update(updates);
-    alert("تم التوزيع ✅ الآن المافيا تصوّت من جوالاتهم.");
+    alert("تم التوزيع ✅");
   }
 
   async function togglePhase(){
@@ -633,7 +760,7 @@
     await SESS(hostCode).update({
       phase: next,
       round: nextRound,
-      votes: { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} },
+      votes: { night: { mafia:{}, doctor:{}, detective:{}, bodyguard:{}, serial:{} }, day: { public:{} }, dayExtra: { sniper:{} } },
       "config/timer": { running:false, endAt:0 },
       log: `تم الانتقال إلى ${next === "night" ? "ليل 🌙" : "نهار ☀️"} (الجولة ${nextRound}).`
     });
@@ -647,124 +774,185 @@
     if (!s || s.status !== "playing") return alert("الجلسة غير جاهزة.");
     if (s.winner) return alert("اللعبة منتهية.");
 
-    const tieMode = String(s.config?.tieMode || "revote"); // revote | random
+    const tieMode = String(s.config?.tieMode || "revote");
     const playersObj = s.players || {};
     const players = Object.values(playersObj);
     const aliveObj = Object.fromEntries(players.filter(p => p.alive).map(p => [p.id, p]));
-
     const pickFromCandidates = (candidates) => candidates[Math.floor(Math.random() * candidates.length)];
 
+    async function handleTieReset(path, msg){
+      if (tieMode === "revote") {
+        const upd = {}; upd[path] = {}; upd["log"] = msg + " تمت إعادة التصويت.";
+        await SESS(hostCode).update(upd);
+        alert("تعادل: تمت إعادة التصويت.");
+        return { stop:true };
+      }
+      return { stop:false };
+    }
+
     if (s.phase === "night") {
-      // شرط اكتمال تصويت المافيا الأحياء
       const aliveMafiaIds = Object.values(playersObj).filter(p => p.alive && p.role === "mafia").map(p => p.id);
       const mafiaVotes = s.votes?.night?.mafia || {};
       const votedMafia = aliveMafiaIds.filter(id => mafiaVotes[id]);
-      if (votedMafia.length !== aliveMafiaIds.length) {
+      if (aliveMafiaIds.length > 0 && votedMafia.length !== aliveMafiaIds.length) {
         return alert(`لا يمكن التنفيذ: تصويت المافيا غير مكتمل (${votedMafia.length}/${aliveMafiaIds.length}).`);
       }
 
-      const { candidates } = getTopCandidates(mafiaVotes);
-      if (!candidates.length) return alert("لا يوجد تصويت مافيا كافي.");
+      let mafiaVictimId = "";
+      if (aliveMafiaIds.length > 0) {
+        const mTop = getTopCandidates(mafiaVotes);
+        if (!mTop.candidates.length) return alert("لا يوجد تصويت مافيا.");
+        if (mTop.candidates.length > 1) {
+          const r = await handleTieReset("votes/night/mafia", `تعادل في تصويت المافيا (${mTop.candidates.length} خيارات).`);
+          if (r.stop) return;
+          mafiaVictimId = pickFromCandidates(mTop.candidates);
+        } else mafiaVictimId = mTop.candidates[0];
+      }
 
-      let victimId = candidates[0];
-      if (candidates.length > 1) {
-        if (tieMode === "revote") {
-          await SESS(hostCode).update({
-            "votes/night/mafia": {},
-            log: `تعادل في تصويت الليل (${candidates.length} خيارات). تمت إعادة التصويت 🌙`
-          });
-          return alert("تعادل: تم تصفير تصويت الليل لإعادة التصويت.");
+      const docVotes = s.votes?.night?.doctor || {};
+      let savedId = "";
+      if (Object.keys(docVotes).length) {
+        const dTop = getTopCandidates(docVotes);
+        if (dTop.candidates.length > 1) {
+          const r = await handleTieReset("votes/night/doctor", `تعادل في تصويت الطبيب (${dTop.candidates.length} خيارات).`);
+          if (r.stop) return;
+          savedId = pickFromCandidates(dTop.candidates);
+        } else savedId = dTop.candidates[0] || "";
+      }
+
+      const bgVotes = s.votes?.night?.bodyguard || {};
+      let protectedId = "";
+      if (Object.keys(bgVotes).length) {
+        const bTop = getTopCandidates(bgVotes);
+        if (bTop.candidates.length > 1) {
+          const r = await handleTieReset("votes/night/bodyguard", `تعادل في تصويت الحارس (${bTop.candidates.length} خيارات).`);
+          if (r.stop) return;
+          protectedId = pickFromCandidates(bTop.candidates);
+        } else protectedId = bTop.candidates[0] || "";
+      }
+
+      const skVotes = s.votes?.night?.serial || {};
+      let skVictimId = "";
+      if (Object.keys(skVotes).length) {
+        const sTop = getTopCandidates(skVotes);
+        if (sTop.candidates.length > 1) {
+          const r = await handleTieReset("votes/night/serial", `تعادل في تصويت القاتل المتسلسل (${sTop.candidates.length} خيارات).`);
+          if (r.stop) return;
+          skVictimId = pickFromCandidates(sTop.candidates);
+        } else skVictimId = sTop.candidates[0] || "";
+      }
+
+      // Detective results
+      const detVotes = s.votes?.night?.detective || {};
+      const detPairs = Object.entries(detVotes || {});
+      for (const [detPid, targetId] of detPairs) {
+        const t = playersObj[targetId];
+        const res = t ? (t.role === "mafia" ? "🟥 النتيجة: مافيا" : "🟩 النتيجة: ليس مافيا") : "الهدف غير موجود";
+        await SESS(hostCode).child(`private/detectiveResults/${detPid}`).set(res);
+      }
+
+      const killed = [];
+
+      // Mafia attack
+      if (mafiaVictimId && aliveObj[mafiaVictimId]) {
+        if (mafiaVictimId === savedId) {
+          killed.push(`🩺 تم إنقاذ ${aliveObj[mafiaVictimId].name}`);
+        } else if (mafiaVictimId === protectedId) {
+          const aliveBodyguards = Object.values(playersObj).filter(p => p.alive && p.role === "bodyguard");
+          const bgToDie = aliveBodyguards[0];
+          if (bgToDie) {
+            await SESS(hostCode).child(`players/${bgToDie.id}/alive`).set(false);
+            killed.push(`🛡️ الحارس مات بدلًا عن ${aliveObj[mafiaVictimId].name}`);
+          } else {
+            await SESS(hostCode).child(`players/${mafiaVictimId}/alive`).set(false);
+            killed.push(`🌙 قتل المافيا: ${aliveObj[mafiaVictimId].name}`);
+          }
+        } else {
+          await SESS(hostCode).child(`players/${mafiaVictimId}/alive`).set(false);
+          killed.push(`🌙 قتل المافيا: ${aliveObj[mafiaVictimId].name}`);
         }
-        victimId = pickFromCandidates(candidates);
-        await SESS(hostCode).child("log").set(`تعادل الليل: تم اختيار ضحية عشوائيًا من ${candidates.length} خيارات.`);
       }
 
-      if (aliveObj[victimId]) {
-        await SESS(hostCode).child(`players/${victimId}/alive`).set(false);
-        await SESS(hostCode).child("log").set(`نتيجة الليل: تم قتل لاعب: ${aliveObj[victimId].name}`);
+      // Serial kill
+      if (skVictimId && aliveObj[skVictimId]) {
+        if (skVictimId === savedId) {
+          killed.push(`🩺 تم إنقاذ ${aliveObj[skVictimId].name} (من القاتل المتسلسل)`);
+        } else if (skVictimId === protectedId) {
+          const aliveBodyguards = Object.values(playersObj).filter(p => p.alive && p.role === "bodyguard");
+          const bgToDie = aliveBodyguards[0];
+          if (bgToDie) {
+            await SESS(hostCode).child(`players/${bgToDie.id}/alive`).set(false);
+            killed.push(`🛡️ الحارس مات بدلًا عن ${aliveObj[skVictimId].name} (هجوم القاتل المتسلسل)`);
+          } else {
+            await SESS(hostCode).child(`players/${skVictimId}/alive`).set(false);
+            killed.push(`🔪 قتل القاتل المتسلسل: ${aliveObj[skVictimId].name}`);
+          }
+        } else {
+          await SESS(hostCode).child(`players/${skVictimId}/alive`).set(false);
+          killed.push(`🔪 قتل القاتل المتسلسل: ${aliveObj[skVictimId].name}`);
+        }
       }
+
+      await SESS(hostCode).child("log").set(killed.length ? killed.join(" | ") : "🌙 لم يحدث شيء هذه الليلة.");
+
     } else {
-      // شرط اكتمال تصويت النهار للأحياء
       const aliveAllIds = Object.values(playersObj).filter(p => p.alive).map(p => p.id);
       const dayVotes = s.votes?.day?.public || {};
       const votedAll = aliveAllIds.filter(id => dayVotes[id]);
-      if (votedAll.length !== aliveAllIds.length) {
-        return alert(`لا يمكن التنفيذ: تصويت النهار غير مكتمل (${votedAll.length}/${aliveAllIds.length}).`);
-      }
+      if (votedAll.length !== aliveAllIds.length) return alert(`لا يمكن التنفيذ: تصويت النهار غير مكتمل (${votedAll.length}/${aliveAllIds.length}).`);
 
-      // تنفيذ القناص (إن وُجد تصويت) مرة واحدة طوال اللعبة
+      // Sniper (each sniper once)
       const sniperVotes = s.votes?.dayExtra?.sniper || {};
-      const sTop = getTopCandidates(sniperVotes);
-      if (sTop.candidates.length && !s.config?.sniperUsed) {
-        let sniperTargetId = sTop.candidates[0];
-        if (sTop.candidates.length > 1) {
-          if (tieMode === "revote") {
-            await SESS(hostCode).update({
-              "votes/dayExtra/sniper": {},
-              log: `تعادل في تصويت القناص. تمت إعادة التصويت 🎯`
-            });
-            return alert("تعادل: تم تصفير تصويت القناص لإعادة التصويت.");
-          }
-          sniperTargetId = pickFromCandidates(sTop.candidates);
-        }
-
-        if (aliveObj[sniperTargetId]) {
-          await SESS(hostCode).child(`players/${sniperTargetId}/alive`).set(false);
-          await SESS(hostCode).child("config/sniperUsed").set(true);
-          await SESS(hostCode).child("log").set(`🎯 القناص قتل لاعب: ${aliveObj[sniperTargetId].name}`);
+      const sniperPairs = Object.entries(sniperVotes || {});
+      for (const [snPid, targetId] of sniperPairs) {
+        const usedBy = s.config?.sniperUsedBy || {};
+        if (usedBy[snPid]) continue;
+        if (aliveObj[snPid]?.role !== "sniper") continue;
+        if (aliveObj[targetId]) {
+          await SESS(hostCode).child(`players/${targetId}/alive`).set(false);
+          await SESS(hostCode).child(`config/sniperUsedBy/${snPid}`).set(true);
+          await SESS(hostCode).child("log").set(`🎯 القناص قتل لاعب: ${aliveObj[targetId].name}`);
         }
       }
 
-      // تنفيذ تصويت النهار
       const dTop = getTopCandidates(dayVotes);
-      if (!dTop.candidates.length) return alert("لا يوجد تصويت نهار كافي.");
+      if (!dTop.candidates.length) return alert("لا يوجد تصويت نهار.");
 
       let outId = dTop.candidates[0];
       if (dTop.candidates.length > 1) {
-        if (tieMode === "revote") {
-          await SESS(hostCode).update({
-            "votes/day/public": {},
-            log: `تعادل في تصويت النهار (${dTop.candidates.length} خيارات). تمت إعادة التصويت ☀️`
-          });
-          return alert("تعادل: تم تصفير تصويت النهار لإعادة التصويت.");
-        }
+        const r = await handleTieReset("votes/day/public", `تعادل في تصويت النهار (${dTop.candidates.length} خيارات).`);
+        if (r.stop) return;
         outId = pickFromCandidates(dTop.candidates);
-        await SESS(hostCode).child("log").set(`تعادل النهار: تم اختيار إقصاء عشوائيًا من ${dTop.candidates.length} خيارات.`);
       }
 
       const out = aliveObj[outId];
       if (out) {
         await SESS(hostCode).child(`players/${outId}/alive`).set(false);
-
         if (out.role === "jester") {
-          await SESS(hostCode).update({
-            winner: "jester",
-            log: "🤡 فاز المهرّج وحده! (تم إقصاؤه بالتصويت)"
-          });
+          await SESS(hostCode).update({ winner: "jester", log: "🤡 فاز المهرّج وحده! (تم إقصاؤه بالتصويت)" });
           alert("فاز المهرّج 🤡🏆");
           return;
         } else {
-          await SESS(hostCode).child("log").set(`نتيجة النهار: تم إقصاء لاعب: ${out.name}`);
+          await SESS(hostCode).child("log").set(`☀️ تم إقصاء لاعب: ${out.name}`);
         }
       }
     }
 
-    // Winner check
     const newSnap = await SESS(hostCode).get();
     const ns = newSnap.val();
     const w = computeWinner(Object.values(ns.players || {}));
     if (w) {
       await SESS(hostCode).update({
         winner: w,
-        log: w === "mafia" ? "🏆 فازت المافيا!" : "🏆 فاز المواطنون!"
+        log: w === "serial" ? "🏆 فاز القاتل المتسلسل!" : (w === "mafia" ? "🏆 فازت المافيا!" : "🏆 فاز المواطنون!")
       });
-      alert(w === "mafia" ? "فازت المافيا 🟥🏆" : "فاز المواطنون 🟩🏆");
+      alert(w === "serial" ? "فاز القاتل المتسلسل 🔪🏆" : (w === "mafia" ? "فازت المافيا 🟥🏆" : "فاز المواطنون 🟩🏆"));
     } else {
       alert("تم تنفيذ النتيجة ✅");
     }
   }
 
-  // ---------------- PLAYER ----------------
+  // Player join
   async function joinSession(){
     const code = String(playerCode.value || "").trim();
     const name = String(playerName.value || "").trim();
@@ -783,13 +971,7 @@
     me = { mode:"player", code, pid, name };
     setMe(me);
 
-    await SESS(code).child(`players/${pid}`).set({
-      id: pid,
-      name,
-      alive: true,
-      role: "",
-      joinedAt: now()
-    });
+    await SESS(code).child(`players/${pid}`).set({ id: pid, name, alive: true, role: "", joinedAt: now() });
 
     setScreen("player");
     joinBox.classList.add("hidden");
@@ -800,6 +982,11 @@
     subscribePlayer(code, pid);
   }
 
+  function buildAliveOptions(playersObj, excludeId, allowSelf){
+    const alive = Object.values(playersObj || {}).filter(p => p.alive && (allowSelf || p.id !== excludeId));
+    return alive.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
+  }
+
   function subscribePlayer(code, pid){
     if (playerSub) playerSub.off();
     playerSub = SESS(code);
@@ -808,14 +995,13 @@
       const s = snap.val();
       if (!s) return;
 
-      // winner banner for all
       if (s.winner) {
         winnerBanner.classList.remove("hidden");
-        winnerText.textContent = s.winner === "jester" ? "🤡🏆 فاز المهرّج وحده!" :
-                                 s.winner === "mafia" ? "🟥🏆 فازت المافيا!" : "🟩🏆 فاز المواطنون!";
-      } else {
-        winnerBanner.classList.add("hidden");
-      }
+        winnerText.textContent =
+          s.winner === "jester" ? "🤡🏆 فاز المهرّج وحده!" :
+          s.winner === "serial" ? "🔪🏆 فاز القاتل المتسلسل!" :
+          s.winner === "mafia" ? "🟥🏆 فازت المافيا!" : "🟩🏆 فاز المواطنون!";
+      } else winnerBanner.classList.add("hidden");
 
       const meObj = s.players?.[pid];
       if (!meObj) return;
@@ -823,13 +1009,8 @@
       pPhase.textContent = s.phase === "night" ? "ليل 🌙" : "نهار ☀️";
       pRound.textContent = String(s.round || 1);
 
-      // Live tally (no names)
-      if (liveTally) {
-        if (s.phase === "night") liveTally.textContent = tallyText(s.votes?.night?.mafia);
-        else liveTally.textContent = tallyText(s.votes?.day?.public);
-      }
+      if (liveTally) liveTally.textContent = s.phase === "night" ? tallyText(s.votes?.night?.mafia) : tallyText(s.votes?.day?.public);
 
-      // Role
       const roleKey = meObj.role || "";
       if (!roleKey) {
         myRoleText.textContent = "بانتظار توزيع الأدوار…";
@@ -839,196 +1020,230 @@
         myRoleHint.textContent = ROLE_UI[roleKey]?.hint || "—";
       }
 
-      // Vote status
-      renderMyVoteStatus(s, pid, roleKey);
+      const detRes = s.private?.detectiveResults?.[pid];
+      if (detRes) { roleExtraBox.classList.remove("hidden"); roleExtraText.textContent = detRes; }
+      else roleExtraBox.classList.add("hidden");
 
-      // Action UI
+      // Vote status
+      if (!meObj.alive) myVoteStatus.textContent = "❌ خارج اللعبة";
+      else if (s.phase === "night") {
+        const parts = [];
+        if (roleKey === "mafia") parts.push(s.votes?.night?.mafia?.[pid] ? "✅ صوّت (مافيا)" : "⏳ لم تصوّت (مافيا)");
+        if (roleKey === "doctor") parts.push(s.votes?.night?.doctor?.[pid] ? "✅ اخترت إنقاذ" : "⏳ لم تختر إنقاذ");
+        if (roleKey === "detective") parts.push(s.votes?.night?.detective?.[pid] ? "✅ اخترت تحقيق" : "⏳ لم تختر تحقيق");
+        if (roleKey === "bodyguard") parts.push(s.votes?.night?.bodyguard?.[pid] ? "✅ اخترت حماية" : "⏳ لم تختر حماية");
+        if (roleKey === "serial") parts.push(s.votes?.night?.serial?.[pid] ? "✅ اخترت قتل" : "⏳ لم تختر قتل");
+        myVoteStatus.textContent = parts.length ? parts.join(" | ") : "ليل: لا يوجد إجراء لك.";
+      } else {
+        const v = s.votes?.day?.public?.[pid];
+        let extra = "";
+        if (roleKey === "sniper") {
+          const used = !!s.config?.sniperUsedBy?.[pid];
+          const sv = s.votes?.dayExtra?.sniper?.[pid];
+          extra = used ? " | 🎯 الطلقة مستهلكة." : (sv ? " | 🎯 تم تحديد الهدف." : " | 🎯 لم تستخدم الطلقة.");
+        }
+        myVoteStatus.textContent = (v ? "✅ تم تصويت النهار." : "⏳ لم تصوّت بعد.") + extra;
+      }
+
       renderPlayerAction(s, pid, meObj, roleKey);
     });
   }
 
-  function renderMyVoteStatus(s, pid, roleKey){
-    if (s.phase === "night") {
-      if (roleKey !== "mafia") {
-        myVoteStatus.textContent = "ليل: لا يوجد تصويت لك.";
-        return;
-      }
-      const v = s.votes?.night?.mafia?.[pid];
-      myVoteStatus.textContent = v ? "✅ تم إرسال تصويت القتل." : "⏳ لم تصوّت بعد.";
-    } else {
-      const v = s.votes?.day?.public?.[pid];
-      let extra = "";
-      if (roleKey === "sniper") {
-        const sv = s.votes?.dayExtra?.sniper?.[pid];
-        extra = s.config?.sniperUsed ? " | 🎯 الطلقة مستهلكة." : (sv ? " | 🎯 تم تحديد هدف القناص." : " | 🎯 لم تستخدم الطلقة.");
-      }
-      myVoteStatus.textContent = (v ? "✅ تم إرسال تصويت النهار." : "⏳ لم تصوّت بعد.") + extra;
-    }
-  }
-
-  function buildAliveOptions(playersObj, excludeId){
-    const alive = Object.values(playersObj || {}).filter(p => p.alive && p.id !== excludeId);
-    return alive.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
-  }
-
   function renderPlayerAction(s, pid, meObj, roleKey){
     const playersObj = s.players || {};
-    const aliveOptions = buildAliveOptions(playersObj, pid); // ✅ منع التصويت على النفس
+    if (!meObj.alive) { pActionBox.innerHTML = `<div class="text-center text-slate-300">أنت خارج اللعبة ❌</div>`; return; }
+    if (!roleKey) { pActionBox.innerHTML = `<div class="text-center text-slate-300">بانتظار توزيع الأدوار…</div>`; return; }
+    if (s.winner) { pActionBox.innerHTML = `<div class="text-center text-slate-300">انتهت اللعبة 🏁</div>`; return; }
 
-    if (!meObj.alive) {
-      pActionBox.innerHTML = `<div class="text-center text-slate-300">أنت خارج اللعبة ❌</div>`;
-      return;
-    }
-
-    if (!roleKey) {
-      pActionBox.innerHTML = `<div class="text-center text-slate-300">بانتظار توزيع الأدوار من المدير…</div>`;
-      return;
-    }
-
-    if (s.winner) {
-      pActionBox.innerHTML = `<div class="text-center text-slate-300">انتهت اللعبة 🏁</div>`;
-      return;
-    }
-
-    // Night
     if (s.phase === "night") {
-      if (roleKey !== "mafia") {
-        pActionBox.innerHTML = `<div class="text-center text-slate-300">ليل… انتظر (تصويت المافيا فقط).</div>`;
-        return;
-      }
-
-      const already = s.votes?.night?.mafia?.[pid];
-
-      pActionBox.innerHTML = `
-        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
-          <div class="font-extrabold text-lg">تصويت المافيا (قتل)</div>
-          <select id="selNightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-            <option value="">اختر الضحية</option>
-            ${aliveOptions}
-          </select>
-          <button id="btnNightKill" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
-            ${already ? "تم إرسال التصويت" : "إرسال التصويت"}
-          </button>
-          <div class="text-xs text-slate-400">تصويتك سري ولن يظهر لأحد.</div>
-        </div>
-      `;
-
-      if (!already) {
-        $("btnNightKill").addEventListener("click", async () => {
+      if (roleKey === "mafia") {
+        const aliveOptions = buildAliveOptions(playersObj, pid, false);
+        const already = s.votes?.night?.mafia?.[pid];
+        pActionBox.innerHTML = `
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div class="font-extrabold text-lg">تصويت المافيا (قتل)</div>
+            <select id="selNightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+              <option value="">اختر الضحية</option>${aliveOptions}
+            </select>
+            <button id="btnNightKill" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
+              ${already ? "تم الإرسال" : "إرسال"}
+            </button>
+          </div>`;
+        if (!already) $("btnNightKill").addEventListener("click", async () => {
           const victimId = $("selNightKill").value || "";
           if (!victimId) return alert("اختر الضحية.");
           await SESS(me.code).child(`votes/night/mafia/${pid}`).set(victimId);
-          alert("تم تسجيل تصويتك ✅");
+          alert("تم ✅");
         });
+        return;
       }
+
+      if (roleKey === "doctor") {
+        const aliveOptions = buildAliveOptions(playersObj, pid, true);
+        const already = s.votes?.night?.doctor?.[pid];
+        pActionBox.innerHTML = `
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div class="font-extrabold text-lg">🩺 الطبيب (إنقاذ)</div>
+            <select id="selDoc" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+              <option value="">اختر من تنقذه</option>${aliveOptions}
+            </select>
+            <button id="btnDoc" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-emerald-600 hover:bg-emerald-500"} font-extrabold" ${already ? "disabled" : ""}>
+              ${already ? "تم الإرسال" : "إرسال"}
+            </button>
+          </div>`;
+        if (!already) $("btnDoc").addEventListener("click", async () => {
+          const t = $("selDoc").value || "";
+          if (!t) return alert("اختر لاعب.");
+          await SESS(me.code).child(`votes/night/doctor/${pid}`).set(t);
+          alert("تم ✅");
+        });
+        return;
+      }
+
+      if (roleKey === "detective") {
+        const aliveOptions = buildAliveOptions(playersObj, pid, false);
+        const already = s.votes?.night?.detective?.[pid];
+        pActionBox.innerHTML = `
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div class="font-extrabold text-lg">🔎 المحقق (تحقيق)</div>
+            <select id="selDet" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+              <option value="">اختر الهدف</option>${aliveOptions}
+            </select>
+            <button id="btnDet" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-sky-600 hover:bg-sky-500"} font-extrabold" ${already ? "disabled" : ""}>
+              ${already ? "تم الإرسال" : "إرسال"}
+            </button>
+          </div>`;
+        if (!already) $("btnDet").addEventListener("click", async () => {
+          const t = $("selDet").value || "";
+          if (!t) return alert("اختر هدف.");
+          await SESS(me.code).child(`votes/night/detective/${pid}`).set(t);
+          alert("تم ✅");
+        });
+        return;
+      }
+
+      if (roleKey === "bodyguard") {
+        const aliveOptions = buildAliveOptions(playersObj, pid, true);
+        const already = s.votes?.night?.bodyguard?.[pid];
+        pActionBox.innerHTML = `
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div class="font-extrabold text-lg">🛡️ الحارس (حماية)</div>
+            <select id="selBg" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+              <option value="">اختر من تحميه</option>${aliveOptions}
+            </select>
+            <button id="btnBg" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-indigo-600 hover:bg-indigo-500"} font-extrabold" ${already ? "disabled" : ""}>
+              ${already ? "تم الإرسال" : "إرسال"}
+            </button>
+          </div>`;
+        if (!already) $("btnBg").addEventListener("click", async () => {
+          const t = $("selBg").value || "";
+          if (!t) return alert("اختر لاعب.");
+          await SESS(me.code).child(`votes/night/bodyguard/${pid}`).set(t);
+          alert("تم ✅");
+        });
+        return;
+      }
+
+      if (roleKey === "serial") {
+        const aliveOptions = buildAliveOptions(playersObj, pid, false);
+        const already = s.votes?.night?.serial?.[pid];
+        pActionBox.innerHTML = `
+          <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
+            <div class="font-extrabold text-lg">🔪 القاتل المتسلسل (قتل)</div>
+            <select id="selSk" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
+              <option value="">اختر الضحية</option>${aliveOptions}
+            </select>
+            <button id="btnSk" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
+              ${already ? "تم الإرسال" : "إرسال"}
+            </button>
+          </div>`;
+        if (!already) $("btnSk").addEventListener("click", async () => {
+          const t = $("selSk").value || "";
+          if (!t) return alert("اختر الضحية.");
+          await SESS(me.code).child(`votes/night/serial/${pid}`).set(t);
+          alert("تم ✅");
+        });
+        return;
+      }
+
+      pActionBox.innerHTML = `<div class="text-center text-slate-300">ليل… انتظر.</div>`;
       return;
     }
 
     // Day
+    const aliveOptionsNoSelf = buildAliveOptions(playersObj, pid, false);
     const dayAlready = s.votes?.day?.public?.[pid];
+    const sniperVote = s.votes?.dayExtra?.sniper?.[pid];
+    const used = !!s.config?.sniperUsedBy?.[pid];
+    const sniperDisabled = used || !!sniperVote;
 
-    const dayVoteBox = `
+    pActionBox.innerHTML = `
       <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
         <div class="font-extrabold text-lg">تصويت النهار (إقصاء)</div>
         <select id="selDayVote" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${dayAlready ? "disabled" : ""}>
-          <option value="">اختر الشخص</option>
-          ${aliveOptions}
+          <option value="">اختر الشخص</option>${aliveOptionsNoSelf}
         </select>
         <button id="btnDayVote" class="tap w-full px-4 py-4 rounded-3xl ${dayAlready ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-amber-600 hover:bg-amber-500"} font-extrabold" ${dayAlready ? "disabled" : ""}>
-          ${dayAlready ? "تم إرسال التصويت" : "إرسال التصويت"}
+          ${dayAlready ? "تم الإرسال" : "إرسال التصويت"}
         </button>
-        <div class="text-xs text-slate-400">يتم تنفيذ النتيجة عند ضغط المدير “تنفيذ النتيجة”.</div>
       </div>
-    `;
-
-    const sniperAlready = s.votes?.dayExtra?.sniper?.[pid];
-    const sniperDisabled = !!s.config?.sniperUsed || !!sniperAlready;
-
-    const sniperBox = (roleKey === "sniper")
-      ? `
+      ${roleKey === "sniper" ? `
         <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
           <div class="flex items-center justify-between">
             <div class="font-extrabold text-lg">🎯 القناص</div>
             <div class="text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60">
-              ${s.config?.sniperUsed ? "مستخدم" : (sniperAlready ? "تم الإرسال" : "متاح")}
+              ${used ? "مستخدم" : (sniperVote ? "تم الإرسال" : "متاح")}
             </div>
           </div>
-          <div class="text-sm text-slate-300">طلقة واحدة طوال اللعبة (يمكنك عدم استخدامها).</div>
           <select id="selSniper" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${sniperDisabled ? "disabled" : ""}>
-            <option value="">اختر هدف القناص</option>
-            ${aliveOptions}
+            <option value="">اختر الهدف</option>${aliveOptionsNoSelf}
           </select>
           <button id="btnSniper" class="tap w-full px-4 py-4 rounded-3xl ${sniperDisabled ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${sniperDisabled ? "disabled" : ""}>
-            ${s.config?.sniperUsed ? "تم استخدام الطلقة" : (sniperAlready ? "تم تحديد الهدف" : "تحديد الهدف (سري)")}
+            ${used ? "تم استخدام الطلقة" : (sniperVote ? "تم تحديد الهدف" : "تحديد الهدف (سري)")}
           </button>
-          <div class="text-xs text-slate-400">يتم تنفيذ قتل القناص عند ضغط المدير “تنفيذ النتيجة”.</div>
         </div>
-      ` : "";
+      ` : "" }
+    `;
 
-    pActionBox.innerHTML = dayVoteBox + sniperBox;
+    if (!dayAlready) $("btnDayVote").addEventListener("click", async () => {
+      const targetId = $("selDayVote").value || "";
+      if (!targetId) return alert("اختر الشخص.");
+      await SESS(me.code).child(`votes/day/public/${pid}`).set(targetId);
+      alert("تم ✅");
+    });
 
-    if (!dayAlready) {
-      $("btnDayVote").addEventListener("click", async () => {
-        const targetId = $("selDayVote").value || "";
-        if (!targetId) return alert("اختر الشخص.");
-        await SESS(me.code).child(`votes/day/public/${pid}`).set(targetId);
-        alert("تم تسجيل تصويتك ✅");
-      });
-    }
-
-    if (roleKey === "sniper" && !sniperDisabled) {
-      $("btnSniper").addEventListener("click", async () => {
-        const targetId = $("selSniper").value || "";
-        if (!targetId) return alert("اختر هدف القناص.");
-        await SESS(me.code).child(`votes/dayExtra/sniper/${pid}`).set(targetId);
-        alert("تم تحديد هدف القناص ✅");
-      });
-    }
+    if (roleKey === "sniper" && !sniperDisabled) $("btnSniper").addEventListener("click", async () => {
+      const targetId = $("selSniper").value || "";
+      if (!targetId) return alert("اختر الهدف.");
+      await SESS(me.code).child(`votes/dayExtra/sniper/${pid}`).set(targetId);
+      alert("تم ✅");
+    });
   }
 
-  // Role toggle
-  btnToggleRole.addEventListener("click", () => {
-    myRoleCard.classList.toggle("hidden");
-  });
-
-  // Copy/share button
+  // Controls
+  btnToggleRole.addEventListener("click", () => myRoleCard.classList.toggle("hidden"));
   btnCopyShare.addEventListener("click", () => {
     if (me?.mode === "host" && hostCode) return shareLink(hostCode);
     if (me?.mode === "player" && me?.code) return shareLink(me.code);
   });
+  btnResetLocal.addEventListener("click", () => { clearMe(); location.href = location.pathname; });
 
-  // Reset local
-  btnResetLocal.addEventListener("click", () => {
-    clearMe();
-    location.href = location.pathname; // remove query
-  });
-
-  // Timer buttons
   btnTimerStart?.addEventListener("click", () => hostCode && timerStart(hostCode));
   btnTimerStop?.addEventListener("click", () => hostCode && timerStop(hostCode));
   btnTimerReset?.addEventListener("click", () => hostCode && timerReset(hostCode));
 
-  // Tie mode change (save live)
-  hostTieMode?.addEventListener("change", async () => {
-    if (!hostCode) return;
-    await SESS(hostCode).child("config/tieMode").set(String(hostTieMode.value || "revote"));
-  });
+  hostTieMode?.addEventListener("change", async () => { if (!hostCode) return; await SESS(hostCode).child("config/tieMode").set(String(hostTieMode.value || "revote")); });
 
-  // Buttons
   btnGoHost.addEventListener("click", createSession);
   btnGoPlayer.addEventListener("click", () => setScreen("player"));
-
   btnCopyJoin.addEventListener("click", () => hostCode && shareLink(hostCode));
   btnHostLockAndAssign.addEventListener("click", lockAndAssign);
   btnHostTogglePhase.addEventListener("click", togglePhase);
   btnHostResolve.addEventListener("click", resolvePhase);
-
   btnPlayerJoin.addEventListener("click", joinSession);
-
   btnBackMode1.addEventListener("click", () => { clearMe(); setScreen("mode"); });
   btnBackMode2.addEventListener("click", () => { clearMe(); setScreen("mode"); });
 
-  // Smooth timer refresh for host display (no heavy load)
   setInterval(() => {
     if (me?.mode === "host" && hostCode && hostTimerText) {
       SESS(hostCode).child("config/timer").get().then(snap => {
@@ -1038,22 +1253,13 @@
     }
   }, 1000);
 
-  // Auto resume
+  // Resume
   if (me?.mode === "host" && me?.code) {
-    hostCode = me.code;
-    hostCodeEl.textContent = hostCode;
-    setScreen("host");
-    subscribeHost(hostCode);
+    hostCode = me.code; hostCodeEl.textContent = hostCode; setScreen("host"); subscribeHost(hostCode);
   } else if (me?.mode === "player" && me?.code && me?.pid) {
-    setScreen("player");
-    joinBox.classList.add("hidden");
-    playerBox.classList.remove("hidden");
-    pName.textContent = me.name;
-    pCode.textContent = me.code;
-    subscribePlayer(me.code, me.pid);
-  } else {
-    setScreen("mode");
-  }
+    setScreen("player"); joinBox.classList.add("hidden"); playerBox.classList.remove("hidden");
+    pName.textContent = me.name; pCode.textContent = me.code; subscribePlayer(me.code, me.pid);
+  } else setScreen("mode");
 })();
 </script>
 </body>
