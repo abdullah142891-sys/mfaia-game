@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>مافيا — مدير الجلسة</title>
+
+  <!-- Tailwind CDN (سريع وممتاز للجوال) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* تحسينات للجوال + حواف آمنة (iPhone notch) */
+    body { padding-bottom: env(safe-area-inset-bottom); }
+    .tap { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur border-b border-slate-800">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="font-extrabold text-lg">🕵️‍♂️ مافيا</div>
+      <button id="btnResetAll" class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">
+        إعادة ضبط
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-md mx-auto px-4 py-5 space-y-4">
+    <!-- شاشة الإعداد -->
+    <section id="screenSetup" class="space-y-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 shadow">
+        <h1 class="text-xl font-extrabold">إعداد اللعبة (جوال)</h1>
+        <p class="text-slate-300 text-sm mt-1">
+          اكتب أسماء اللاعبين، اختر الأدوار، ثم وزّعها بسرّية لاعب-لاعب.
+        </p>
+      </div>
+
+      <!-- إضافة لاعب -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+        <label class="text-sm text-slate-300">اسم اللاعب</label>
+        <div class="mt-2 flex gap-2">
+          <input id="playerName"
+                 class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500"
+                 placeholder="مثال: عبدالله" />
+          <button id="btnAddPlayer"
+                  class="tap shrink-0 px-4 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 font-bold">
+            إضافة
+          </button>
+        </div>
+
+        <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+          <span>نصيحة: 7+ لاعبين أفضل</span>
+          <button id="btnAddSample" class="tap underline hover:text-slate-200">إضافة أسماء تجريبية</button>
+        </div>
+      </div>
+
+      <!-- قائمة اللاعبين -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+        <div class="flex items-center justify-between">
+          <h2 class="font-extrabold">اللاعبون</h2>
+          <span id="playersCount" class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-2 py-1 rounded-xl">0</span>
+        </div>
+
+        <div id="playersList" class="mt-3 space-y-2"></div>
+
+        <div class="mt-3 text-xs text-slate-400">
+          اضغط على ✕ لحذف لاعب.
+        </div>
+      </div>
+
+      <!-- الأدوار -->
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 space-y-3">
+        <h2 class="font-extrabold">الأدوار</h2>
+        <p class="text-xs text-slate-300">
+          اختر عدد كل دور. سيتم توزيعها عشوائيًا. الباقي يصيرون "مواطن".
+        </p>
+
+        <div id="rolesBox" class="space-y-3"></div>
+
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-xs text-slate-300">
+          <div class="font-bold mb-1">ملاحظة</div>
+          <div>لو مجموع الأدوار أكبر من عدد اللاعبين، ما راح يكمل التوزيع.</div>
+        </div>
+      </div>
+
+      <button id="btnAssignRoles"
+              class="tap w-full px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+        🎲 توزيع الأدوار (بدء الكشف السري)
+      </button>
+    </section>
+
+    <!-- شاشة الكشف السري -->
+    <section id="screenReveal" class="hidden space-y-4">
+      <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-xs text-slate-300">اللاعب الحالي</div>
+            <div id="revealPlayerName" class="text-xl font-extrabold mt-1"></div>
+          </div>
+          <div class="text-xs text-slate-300 bg-slate-800 border border-slate-700 px-3 py-2 rounded-2xl">
+            <span id="revealIndex">1</span>/<span id="revealTotal">1</span>
+          </div>
+        </div>
+
+        <div class="mt-3 text-sm text-slate-300">
+          مرّر الجوال للاعب هذا. اضغط "أظهر دوري" ثم "إخفاء" بعد ما يشوف.
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <button id="btnPrevReveal" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
+          ⬅️ السابق
+        </button>
+        <button id="btnNextReveal" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
+          التالي ➡️
+        </button>
+      </div>
+
+      <button id="btnShowRole" class="tap w-full px-4 py-4 rounded-2xl bg-sky-600 hover:bg-sky-500 font-extrabold text-lg">
+        👁️ أظهر دوري
+      </button>
+
+      <button id="btnHideRole" class="hidden tap w-full px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">
+        🙈 إخفاء
+      </button>
+
+      <div id="roleCard" class="hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+        <div class="text-xs text-slate-300">دورك</div>
+        <div id="roleName" class="text-2xl font-extrabold mt-1"></div>
+        <div id="roleHint" class="text-slate-300 text-sm mt-2"></div>
+      </div>
+
+      <button id="btnGoBackSetup" class="tap w-full px-4 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 font-bold">
+        رجوع للإعداد
+      </button>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+
+  // ====== أدوار جاهزة (أساسية + إضافية) ======
+  // في الخطوة 2 بنضيف منطق الليل/النهار لهذه الأدوار
+  const ROLE_DEFS = [
+    { key:"mafia",   name:"مافيا",     defaultCount:1, hint:"بالليل تختارون ضحية. بالنهار حاولوا ما تنكشفون." },
+    { key:"don",     name:"دون (زعيم المافيا)", defaultCount:0, hint:"مافيا خاصة: يقود الفريق (حسب قوانينكم)." },
+    { key:"doctor",  name:"طبيب",     defaultCount:1, hint:"بالليل تختار شخص تنقذه." },
+    { key:"detective",name:"محقق",    defaultCount:1, hint:"بالليل تحقق في لاعب وتعرف إذا هو مافيا أو لا." },
+
+    // أدوار إضافية
+    { key:"bodyguard", name:"حارس", defaultCount:0, hint:"يحمي لاعب (قوانين حسب اتفاقكم)." },
+    { key:"sniper",    name:"قناص", defaultCount:0, hint:"يمتلك طلقة واحدة لقتل مشتبه (حسب القواعد)." },
+    { key:"jester",    name:"المهرّج", defaultCount:0, hint:"هدفه يُقصى بالتصويت ليفوز وحده (اختياري)." },
+    { key:"lover",     name:"عاشق", defaultCount:0, hint:"يرتبط بلاعب آخر؛ إذا مات أحدكما قد يموت الثاني (اختياري)." },
+  ];
+
+  // ====== الحالة ======
+  const state = {
+    players: [], // [{id,name,roleKey,roleName}]
+    roleCounts: Object.fromEntries(ROLE_DEFS.map(r => [r.key, r.defaultCount])),
+    revealIndex: 0,
+    assigned: false,
+  };
+
+  // ====== عناصر ======
+  const screenSetup = $("screenSetup");
+  const screenReveal = $("screenReveal");
+
+  const playerName = $("playerName");
+  const btnAddPlayer = $("btnAddPlayer");
+  const btnAddSample = $("btnAddSample");
+  const playersList = $("playersList");
+  const playersCount = $("playersCount");
+
+  const rolesBox = $("rolesBox");
+  const btnAssignRoles = $("btnAssignRoles");
+
+  const revealPlayerName = $("revealPlayerName");
+  const revealIndexEl = $("revealIndex");
+  const revealTotalEl = $("revealTotal");
+
+  const btnPrevReveal = $("btnPrevReveal");
+  const btnNextReveal = $("btnNextReveal");
+  const btnShowRole = $("btnShowRole");
+  const btnHideRole = $("btnHideRole");
+  const roleCard = $("roleCard");
+  const roleName = $("roleName");
+  const roleHint = $("roleHint");
+  const btnGoBackSetup = $("btnGoBackSetup");
+  const btnResetAll = $("btnResetAll");
+
+  // ====== أدوات ======
+  const rid = () => (crypto?.getRandomValues ? [...crypto.getRandomValues(new Uint32Array(2))].map(x=>x.toString(16)).join("") : String(Math.random()).slice(2));
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  // ====== رسم الأدوار ======
+  function renderRoles() {
+    rolesBox.innerHTML = "";
+    ROLE_DEFS.forEach(role => {
+      const wrap = document.createElement("div");
+      wrap.className = "rounded-2xl border border-slate-800 bg-slate-950 p-3";
+      wrap.innerHTML = `
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <div class="font-extrabold">${escapeHtml(role.name)}</div>
+            <div class="text-xs text-slate-400 mt-1">${escapeHtml(role.hint)}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="tap px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold" data-act="dec" data-key="${role.key}">-</button>
+            <div class="min-w-10 text-center font-extrabold text-lg" id="count_${role.key}">${state.roleCounts[role.key] ?? 0}</div>
+            <button class="tap px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold" data-act="inc" data-key="${role.key}">+</button>
+          </div>
+        </div>
+      `;
+      rolesBox.appendChild(wrap);
+    });
+
+    rolesBox.querySelectorAll("button[data-act]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-key");
+        const act = btn.getAttribute("data-act");
+        const cur = Number(state.roleCounts[key] ?? 0);
+        const next = act === "inc" ? cur + 1 : Math.max(0, cur - 1);
+        state.roleCounts[key] = next;
+        const el = $("count_" + key);
+        if (el) el.textContent = String(next);
+      });
+    });
+  }
+
+  // ====== رسم اللاعبين ======
+  function renderPlayers() {
+    playersCount.textContent = String(state.players.length);
+    playersList.innerHTML = "";
+
+    if (state.players.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "text-slate-400 text-sm";
+      empty.textContent = "لا يوجد لاعبين بعد.";
+      playersList.appendChild(empty);
+      return;
+    }
+
+    state.players.forEach(p => {
+      const row = document.createElement("div");
+      row.className = "flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3";
+      row.innerHTML = `
+        <div class="font-bold">${escapeHtml(p.name)}</div>
+        <button class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700" data-del="${p.id}">✕</button>
+      `;
+      playersList.appendChild(row);
+    });
+
+    playersList.querySelectorAll("button[data-del]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-del");
+        state.players = state.players.filter(p => p.id !== id);
+        renderPlayers();
+      });
+    });
+  }
+
+  // ====== إضافة لاعب ======
+  function addPlayer(name) {
+    const n = (name ?? "").trim();
+    if (!n) return;
+    if (state.players.some(p => p.name === n)) {
+      alert("هذا الاسم موجود بالفعل.");
+      return;
+    }
+    state.players.push({ id: rid(), name: n, roleKey: null, roleName: null });
+    playerName.value = "";
+    playerName.focus();
+    renderPlayers();
+  }
+
+  // ====== توزيع الأدوار ======
+  function assign() {
+    if (state.players.length < 5) {
+      alert("ضيف على الأقل 5 لاعبين.");
+      return;
+    }
+
+    // بناء قائمة الأدوار
+    const roles = [];
+    for (const r of ROLE_DEFS) {
+      const c = Number(state.roleCounts[r.key] ?? 0);
+      for (let i = 0; i < c; i++) roles.push(r.key);
+    }
+
+    if (roles.length > state.players.length) {
+      alert("مجموع الأدوار أكبر من عدد اللاعبين.");
+      return;
+    }
+
+    // الباقي مواطن
+    while (roles.length < state.players.length) roles.push("citizen");
+
+    const rolesShuffled = shuffle(roles);
+    const playersShuffled = shuffle(state.players);
+
+    // إسناد
+    playersShuffled.forEach((p, idx) => {
+      const rk = rolesShuffled[idx];
+      const def = ROLE_DEFS.find(x => x.key === rk);
+      p.roleKey = rk;
+      p.roleName = def ? def.name : (rk === "citizen" ? "مواطن" : rk);
+    });
+
+    state.players = playersShuffled;
+    state.revealIndex = 0;
+    state.assigned = true;
+
+    goReveal();
+    updateRevealUI();
+  }
+
+  function goReveal() {
+    screenSetup.classList.add("hidden");
+    screenReveal.classList.remove("hidden");
+  }
+
+  function goSetup() {
+    screenReveal.classList.add("hidden");
+    screenSetup.classList.remove("hidden");
+  }
+
+  function updateRevealUI() {
+    const p = state.players[state.revealIndex];
+    revealPlayerName.textContent = p?.name ?? "";
+    revealIndexEl.textContent = String(state.revealIndex + 1);
+    revealTotalEl.textContent = String(state.players.length);
+
+    // أخفِ الدور
+    roleCard.classList.add("hidden");
+    btnHideRole.classList.add("hidden");
+    btnShowRole.classList.remove("hidden");
+  }
+
+  function showRole() {
+    const p = state.players[state.revealIndex];
+    if (!p) return;
+
+    roleName.textContent = p.roleName || "";
+    // hint
+    const def = ROLE_DEFS.find(x => x.key === p.roleKey);
+    roleHint.textContent = def?.hint || (p.roleKey === "citizen" ? "حلّل الكلام وصوّت صح." : "");
+    roleCard.classList.remove("hidden");
+    btnShowRole.classList.add("hidden");
+    btnHideRole.classList.remove("hidden");
+  }
+
+  function hideRole() {
+    roleCard.classList.add("hidden");
+    btnHideRole.classList.add("hidden");
+    btnShowRole.classList.remove("hidden");
+  }
+
+  function nextReveal() {
+    if (state.revealIndex < state.players.length - 1) {
+      state.revealIndex++;
+      updateRevealUI();
+    }
+  }
+
+  function prevReveal() {
+    if (state.revealIndex > 0) {
+      state.revealIndex--;
+      updateRevealUI();
+    }
+  }
+
+  function resetAll() {
+    if (!confirm("متأكد؟ سيتم حذف كل شيء.")) return;
+    state.players = [];
+    state.roleCounts = Object.fromEntries(ROLE_DEFS.map(r => [r.key, r.defaultCount]));
+    state.revealIndex = 0;
+    state.assigned = false;
+    playerName.value = "";
+    goSetup();
+    renderRoles();
+    renderPlayers();
+  }
+
+  // ====== أحداث ======
+  btnAddPlayer.addEventListener("click", () => addPlayer(playerName.value));
+  playerName.addEventListener("keydown", (e) => { if (e.key === "Enter") addPlayer(playerName.value); });
+
+  btnAddSample.addEventListener("click", () => {
+    ["عبدالله","سارة","فهد","نوف","محمد","ريم","تركي","لمى"].forEach(addPlayer);
+  });
+
+  btnAssignRoles.addEventListener("click", assign);
+
+  btnShowRole.addEventListener("click", showRole);
+  btnHideRole.addEventListener("click", hideRole);
+
+  btnNextReveal.addEventListener("click", nextReveal);
+  btnPrevReveal.addEventListener("click", prevReveal);
+
+  btnGoBackSetup.addEventListener("click", goSetup);
+  btnResetAll.addEventListener("click", resetAll);
+
+  // ====== بدء ======
+  renderRoles();
+  renderPlayers();
+})();
+</script>
+</body>
+</html>
