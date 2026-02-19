@@ -137,9 +137,34 @@
           </button>
         </div>
 
+        <!-- Timer -->
+        <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="font-extrabold">⏱️ مؤقت المرحلة</div>
+            <div id="hostTimerText" class="text-lg font-extrabold">—</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs text-slate-300">المدة (ثانية)</label>
+              <input id="hostPhaseSeconds" type="number" min="15" value="120"
+                class="mt-2 w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-3 text-xs text-slate-300 leading-6">
+              ابدأ المؤقت ثم عند انتهائه نفّذ النتيجة. (المؤقت لا ينفّذ تلقائيًا حفاظًا على التحكم)
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <button id="btnTimerStart" class="tap px-4 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-extrabold">بدء</button>
+            <button id="btnTimerStop" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">إيقاف</button>
+            <button id="btnTimerReset" class="tap px-4 py-4 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 font-bold">إعادة</button>
+          </div>
+        </div>
+
         <div class="grid grid-cols-2 gap-2">
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
-            <div class="text-xs text-slate-300">تصويت المرحلة</div>
+            <div class="text-xs text-slate-300">اكتمال التصويت</div>
             <div id="hostVoteInfo" class="text-lg font-extrabold mt-1">—</div>
           </div>
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
@@ -224,7 +249,10 @@
         </div>
 
         <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5">
-          <div class="font-extrabold text-lg">الإجراء</div>
+          <div class="flex items-center justify-between">
+            <div class="font-extrabold text-lg">الإجراء</div>
+            <div class="text-xs text-slate-400">📊 <span id="liveTally">—</span></div>
+          </div>
           <div id="pActionBox" class="mt-3 space-y-3"></div>
         </div>
 
@@ -263,7 +291,26 @@
     return a;
   };
 
-  const LS_KEY = "mafia_identity_v2";
+  function fmtLeft(ms){
+    const s = Math.max(0, Math.ceil(ms / 1000));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m > 0 ? `${m}:${String(r).padStart(2,"0")}` : `${r}s`;
+  }
+  function tallyText(votesObj){
+    const tally = {};
+    Object.values(votesObj || {}).forEach(id => {
+      if (!id) return;
+      tally[id] = (tally[id] || 0) + 1;
+    });
+    const total = Object.keys(votesObj || {}).length;
+    const arr = Object.entries(tally).sort((a,b)=>b[1]-a[1]);
+    if (total === 0) return "لا توجد أصوات بعد.";
+    const top = arr.length ? arr[0][1] : 0;
+    return `تم تسجيل ${total} صوت. أعلى خيار عليه ${top} صوت.`;
+  }
+
+  const LS_KEY = "mafia_identity_v3";
   const getMe = () => { try { return JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch { return null; } };
   const setMe = (o) => localStorage.setItem(LS_KEY, JSON.stringify(o));
   const clearMe = () => localStorage.removeItem(LS_KEY);
@@ -299,6 +346,13 @@
   const hostLog = $("hostLog");
   const btnBackMode1 = $("btnBackMode1");
 
+  // Timer host UI
+  const hostTimerText = $("hostTimerText");
+  const hostPhaseSeconds = $("hostPhaseSeconds");
+  const btnTimerStart = $("btnTimerStart");
+  const btnTimerStop = $("btnTimerStop");
+  const btnTimerReset = $("btnTimerReset");
+
   // Player
   const joinBox = $("joinBox");
   const playerBox = $("playerBox");
@@ -316,6 +370,7 @@
   const myRoleText = $("myRoleText");
   const myRoleHint = $("myRoleHint");
   const myVoteStatus = $("myVoteStatus");
+  const liveTally = $("liveTally");
   const pActionBox = $("pActionBox");
   const btnBackMode2 = $("btnBackMode2");
 
@@ -369,6 +424,24 @@
     playerCode.value = preCode;
   }
 
+  // ---------------- Timer actions ----------------
+  async function timerStart(code){
+    const seconds = Math.max(15, Number(hostPhaseSeconds?.value || 120));
+    await SESS(code).update({
+      "config/phaseSeconds": seconds,
+      "config/timer": { running: true, endAt: now() + seconds * 1000 }
+    });
+  }
+  async function timerStop(code){
+    await SESS(code).update({ "config/timer": { running: false, endAt: 0 } });
+  }
+  async function timerReset(code){
+    const snap = await SESS(code).get();
+    const s = snap.val();
+    const seconds = Math.max(15, Number(s?.config?.phaseSeconds || 120));
+    await SESS(code).update({ "config/timer": { running: false, endAt: now() + seconds * 1000 } });
+  }
+
   // ---------------- HOST ----------------
   async function createSession(){
     const code = code6();
@@ -380,7 +453,14 @@
       status: "lobby",      // lobby | playing
       phase: "night",       // night | day
       round: 1,
-      config: { mafiaCount: 1, sniperCount: 1, jesterCount: 1, sniperUsed: false },
+      config: {
+        mafiaCount: 1,
+        sniperCount: 1,
+        jesterCount: 1,
+        sniperUsed: false,
+        phaseSeconds: 120,
+        timer: { running: false, endAt: 0 }
+      },
       winner: "",           // "", "mafia", "citizens", "jester"
       log: "تم إنشاء الجلسة.",
       votes: { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} }
@@ -393,6 +473,15 @@
     hostCodeEl.textContent = code;
     setScreen("host");
     subscribeHost(code);
+  }
+
+  function computeWinner(players){
+    const alive = players.filter(p => p.alive);
+    const mafiaAlive = alive.filter(p => p.role === "mafia").length;
+    const others = alive.length - mafiaAlive;
+    if (mafiaAlive === 0) return "citizens";
+    if (mafiaAlive >= others) return "mafia";
+    return "";
   }
 
   function subscribeHost(code){
@@ -408,6 +497,14 @@
       hostRound.textContent = String(s.round || 1);
       hostLog.textContent = s.log || "—";
       hostWinner.textContent = s.winner ? (s.winner === "jester" ? "🤡 المهرّج" : s.winner === "mafia" ? "🟥 المافيا" : "🟩 المواطنون") : "—";
+
+      if (hostPhaseSeconds) hostPhaseSeconds.value = String(s.config?.phaseSeconds || 120);
+
+      // Timer text
+      const t = s.config?.timer || { running:false, endAt:0 };
+      if (hostTimerText) {
+        hostTimerText.textContent = t.running ? fmtLeft((t.endAt || 0) - now()) : "متوقف";
+      }
 
       // players list (roles hidden)
       const playersObj = s.players || {};
@@ -430,14 +527,15 @@
         });
       }
 
-      // vote info (counts only)
-      const alive = players.filter(x => x.alive).length;
+      // vote completion info (counts only, but strict completeness enforced on resolve)
+      const aliveAll = players.filter(x => x.alive);
+      const aliveMafia = aliveAll.filter(x => x.role === "mafia");
       if (s.phase === "night") {
         const mv = s.votes?.night?.mafia || {};
-        hostVoteInfo.textContent = `${Object.keys(mv).length}/${Math.max(1, players.filter(x => x.alive && x.role === "mafia").length)} (مافيا)`;
+        hostVoteInfo.textContent = `${Object.keys(mv).length}/${Math.max(1, aliveMafia.length)} (مافيا)`;
       } else {
         const dv = s.votes?.day?.public || {};
-        hostVoteInfo.textContent = `${Object.keys(dv).length}/${Math.max(1, alive)} (نهار)`;
+        hostVoteInfo.textContent = `${Object.keys(dv).length}/${Math.max(1, aliveAll.length)} (نهار)`;
       }
     });
   }
@@ -480,6 +578,7 @@
     updates["round"] = 1;
     updates["winner"] = "";
     updates["config/sniperUsed"] = false;
+    updates["config/timer"] = { running:false, endAt:0 };
     updates["votes"] = { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} };
     updates["log"] = "تم توزيع الأدوار. بدأت اللعبة: ليل 🌙 (تصويت المافيا).";
 
@@ -500,17 +599,9 @@
       phase: next,
       round: nextRound,
       votes: { night:{mafia:{}}, day:{public:{}}, dayExtra:{sniper:{}} },
+      "config/timer": { running:false, endAt:0 },
       log: `تم الانتقال إلى ${next === "night" ? "ليل 🌙" : "نهار ☀️"} (الجولة ${nextRound}).`
     });
-  }
-
-  function computeWinner(players){
-    const alive = players.filter(p => p.alive);
-    const mafiaAlive = alive.filter(p => p.role === "mafia").length;
-    const others = alive.length - mafiaAlive;
-    if (mafiaAlive === 0) return "citizens";
-    if (mafiaAlive >= others) return "mafia";
-    return "";
   }
 
   async function resolvePhase(){
@@ -525,7 +616,6 @@
     const players = Object.values(playersObj);
     const aliveObj = Object.fromEntries(players.filter(p => p.alive).map(p => [p.id, p]));
 
-    // Helper: tally votes object -> topId
     const topVoted = (votes) => {
       const tally = {};
       Object.values(votes || {}).forEach(id => {
@@ -536,7 +626,15 @@
     };
 
     if (s.phase === "night") {
-      const victimId = topVoted(s.votes?.night?.mafia);
+      // شرط اكتمال تصويت المافيا الأحياء
+      const aliveMafiaIds = Object.values(playersObj).filter(p => p.alive && p.role === "mafia").map(p => p.id);
+      const mafiaVotes = s.votes?.night?.mafia || {};
+      const votedMafia = aliveMafiaIds.filter(id => mafiaVotes[id]);
+      if (votedMafia.length !== aliveMafiaIds.length) {
+        return alert(`لا يمكن التنفيذ: تصويت المافيا غير مكتمل (${votedMafia.length}/${aliveMafiaIds.length}).`);
+      }
+
+      const victimId = topVoted(mafiaVotes);
       if (!victimId) return alert("لا يوجد تصويت مافيا كافي.");
 
       if (aliveObj[victimId]) {
@@ -544,23 +642,32 @@
         await SESS(hostCode).child("log").set(`نتيجة الليل: تم قتل لاعب: ${aliveObj[victimId].name}`);
       }
     } else {
-      // Day: first apply sniper if used this day
-      const sniperTargetId = topVoted(s.votes?.dayExtra?.sniper);
+      // شرط اكتمال تصويت النهار للأحياء
+      const aliveAllIds = Object.values(playersObj).filter(p => p.alive).map(p => p.id);
+      const dayVotes = s.votes?.day?.public || {};
+      const votedAll = aliveAllIds.filter(id => dayVotes[id]);
+      if (votedAll.length !== aliveAllIds.length) {
+        return alert(`لا يمكن التنفيذ: تصويت النهار غير مكتمل (${votedAll.length}/${aliveAllIds.length}).`);
+      }
+
+      // تنفيذ القناص (إن وُجد تصويت) مرة واحدة طوال اللعبة
+      const sniperVotes = s.votes?.dayExtra?.sniper || {};
+      const sniperTargetId = topVoted(sniperVotes);
+
       if (sniperTargetId && !s.config?.sniperUsed && aliveObj[sniperTargetId]) {
         await SESS(hostCode).child(`players/${sniperTargetId}/alive`).set(false);
         await SESS(hostCode).child("config/sniperUsed").set(true);
         await SESS(hostCode).child("log").set(`🎯 القناص قتل لاعب: ${aliveObj[sniperTargetId].name}`);
       }
 
-      // Then public vote eliminate
-      const outId = topVoted(s.votes?.day?.public);
+      // تنفيذ تصويت النهار
+      const outId = topVoted(dayVotes);
       if (!outId) return alert("لا يوجد تصويت نهار كافي.");
 
       const out = aliveObj[outId];
       if (out) {
         await SESS(hostCode).child(`players/${outId}/alive`).set(false);
 
-        // Jester win if eliminated by day vote
         if (out.role === "jester") {
           await SESS(hostCode).update({
             winner: "jester",
@@ -624,6 +731,7 @@
   function subscribePlayer(code, pid){
     if (playerSub) playerSub.off();
     playerSub = SESS(code);
+
     playerSub.on("value", (snap) => {
       const s = snap.val();
       if (!s) return;
@@ -640,11 +748,16 @@
       const meObj = s.players?.[pid];
       if (!meObj) return;
 
-      // Phase
       pPhase.textContent = s.phase === "night" ? "ليل 🌙" : "نهار ☀️";
       pRound.textContent = String(s.round || 1);
 
-      // Role (only this player sees)
+      // Live tally (no names)
+      if (liveTally) {
+        if (s.phase === "night") liveTally.textContent = tallyText(s.votes?.night?.mafia);
+        else liveTally.textContent = tallyText(s.votes?.day?.public);
+      }
+
+      // Role
       const roleKey = meObj.role || "";
       if (!roleKey) {
         myRoleText.textContent = "بانتظار توزيع الأدوار…";
@@ -681,22 +794,20 @@
     }
   }
 
-  function buildAliveOptions(playersObj){
-    const alive = Object.values(playersObj || {}).filter(p => p.alive);
+  function buildAliveOptions(playersObj, excludeId){
+    const alive = Object.values(playersObj || {}).filter(p => p.alive && p.id !== excludeId);
     return alive.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
   }
 
   function renderPlayerAction(s, pid, meObj, roleKey){
     const playersObj = s.players || {};
-    const aliveOptions = buildAliveOptions(playersObj);
+    const aliveOptions = buildAliveOptions(playersObj, pid); // ✅ منع التصويت على النفس
 
-    // Dead player
     if (!meObj.alive) {
       pActionBox.innerHTML = `<div class="text-center text-slate-300">أنت خارج اللعبة ❌</div>`;
       return;
     }
 
-    // Not assigned yet
     if (!roleKey) {
       pActionBox.innerHTML = `<div class="text-center text-slate-300">بانتظار توزيع الأدوار من المدير…</div>`;
       return;
@@ -713,42 +824,54 @@
         pActionBox.innerHTML = `<div class="text-center text-slate-300">ليل… انتظر (تصويت المافيا فقط).</div>`;
         return;
       }
+
+      // Lock vote after submit (simple)
+      const already = s.votes?.night?.mafia?.[pid];
+
       pActionBox.innerHTML = `
         <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
           <div class="font-extrabold text-lg">تصويت المافيا (قتل)</div>
-          <select id="selNightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+          <select id="selNightKill" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
             <option value="">اختر الضحية</option>
             ${aliveOptions}
           </select>
-          <button id="btnNightKill" class="tap w-full px-4 py-4 rounded-3xl bg-rose-600 hover:bg-rose-500 font-extrabold">
-            إرسال التصويت
+          <button id="btnNightKill" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${already ? "disabled" : ""}>
+            ${already ? "تم إرسال التصويت" : "إرسال التصويت"}
           </button>
           <div class="text-xs text-slate-400">تصويتك سري ولن يظهر لأحد.</div>
         </div>
       `;
-      $("btnNightKill").addEventListener("click", async () => {
-        const victimId = $("selNightKill").value || "";
-        if (!victimId) return alert("اختر الضحية.");
-        await SESS(me.code).child(`votes/night/mafia/${pid}`).set(victimId);
-        alert("تم تسجيل تصويتك ✅");
-      });
+
+      if (!already) {
+        $("btnNightKill").addEventListener("click", async () => {
+          const victimId = $("selNightKill").value || "";
+          if (!victimId) return alert("اختر الضحية.");
+          await SESS(me.code).child(`votes/night/mafia/${pid}`).set(victimId);
+          alert("تم تسجيل تصويتك ✅");
+        });
+      }
       return;
     }
 
     // Day
+    const dayAlready = s.votes?.day?.public?.[pid];
+
     const dayVoteBox = `
       <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
         <div class="font-extrabold text-lg">تصويت النهار (إقصاء)</div>
-        <select id="selDayVote" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500">
+        <select id="selDayVote" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${dayAlready ? "disabled" : ""}>
           <option value="">اختر الشخص</option>
           ${aliveOptions}
         </select>
-        <button id="btnDayVote" class="tap w-full px-4 py-4 rounded-3xl bg-amber-600 hover:bg-amber-500 font-extrabold">
-          إرسال التصويت
+        <button id="btnDayVote" class="tap w-full px-4 py-4 rounded-3xl ${dayAlready ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-amber-600 hover:bg-amber-500"} font-extrabold" ${dayAlready ? "disabled" : ""}>
+          ${dayAlready ? "تم إرسال التصويت" : "إرسال التصويت"}
         </button>
         <div class="text-xs text-slate-400">يتم تنفيذ النتيجة عند ضغط المدير “تنفيذ النتيجة”.</div>
       </div>
     `;
+
+    const sniperAlready = s.votes?.dayExtra?.sniper?.[pid];
+    const sniperDisabled = !!s.config?.sniperUsed || !!sniperAlready;
 
     const sniperBox = (roleKey === "sniper")
       ? `
@@ -756,16 +879,16 @@
           <div class="flex items-center justify-between">
             <div class="font-extrabold text-lg">🎯 القناص</div>
             <div class="text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60">
-              ${s.config?.sniperUsed ? "مستخدم" : "متاح"}
+              ${s.config?.sniperUsed ? "مستخدم" : (sniperAlready ? "تم الإرسال" : "متاح")}
             </div>
           </div>
           <div class="text-sm text-slate-300">طلقة واحدة طوال اللعبة (يمكنك عدم استخدامها).</div>
-          <select id="selSniper" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${s.config?.sniperUsed ? "disabled" : ""}>
+          <select id="selSniper" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${sniperDisabled ? "disabled" : ""}>
             <option value="">اختر هدف القناص</option>
             ${aliveOptions}
           </select>
-          <button id="btnSniper" class="tap w-full px-4 py-4 rounded-3xl ${s.config?.sniperUsed ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${s.config?.sniperUsed ? "disabled" : ""}>
-            ${s.config?.sniperUsed ? "تم استخدام الطلقة" : "تحديد الهدف (تصويت سري)"}
+          <button id="btnSniper" class="tap w-full px-4 py-4 rounded-3xl ${sniperDisabled ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${sniperDisabled ? "disabled" : ""}>
+            ${s.config?.sniperUsed ? "تم استخدام الطلقة" : (sniperAlready ? "تم تحديد الهدف" : "تحديد الهدف (سري)")}
           </button>
           <div class="text-xs text-slate-400">يتم تنفيذ قتل القناص عند ضغط المدير “تنفيذ النتيجة”.</div>
         </div>
@@ -773,14 +896,16 @@
 
     pActionBox.innerHTML = dayVoteBox + sniperBox;
 
-    $("btnDayVote").addEventListener("click", async () => {
-      const targetId = $("selDayVote").value || "";
-      if (!targetId) return alert("اختر الشخص.");
-      await SESS(me.code).child(`votes/day/public/${pid}`).set(targetId);
-      alert("تم تسجيل تصويتك ✅");
-    });
+    if (!dayAlready) {
+      $("btnDayVote").addEventListener("click", async () => {
+        const targetId = $("selDayVote").value || "";
+        if (!targetId) return alert("اختر الشخص.");
+        await SESS(me.code).child(`votes/day/public/${pid}`).set(targetId);
+        alert("تم تسجيل تصويتك ✅");
+      });
+    }
 
-    if (roleKey === "sniper" && !s.config?.sniperUsed) {
+    if (roleKey === "sniper" && !sniperDisabled) {
       $("btnSniper").addEventListener("click", async () => {
         const targetId = $("selSniper").value || "";
         if (!targetId) return alert("اختر هدف القناص.");
@@ -807,6 +932,11 @@
     location.href = location.pathname; // remove query
   });
 
+  // Timer buttons
+  btnTimerStart?.addEventListener("click", () => hostCode && timerStart(hostCode));
+  btnTimerStop?.addEventListener("click", () => hostCode && timerStop(hostCode));
+  btnTimerReset?.addEventListener("click", () => hostCode && timerReset(hostCode));
+
   // Buttons
   btnGoHost.addEventListener("click", createSession);
   btnGoPlayer.addEventListener("click", () => setScreen("player"));
@@ -820,6 +950,16 @@
 
   btnBackMode1.addEventListener("click", () => { clearMe(); setScreen("mode"); });
   btnBackMode2.addEventListener("click", () => { clearMe(); setScreen("mode"); });
+
+  // Smooth timer refresh for host display (no heavy load)
+  setInterval(() => {
+    if (me?.mode === "host" && hostCode && hostTimerText) {
+      SESS(hostCode).child("config/timer").get().then(snap => {
+        const t = snap.val() || { running:false, endAt:0 };
+        hostTimerText.textContent = t.running ? fmtLeft((t.endAt||0) - now()) : "متوقف";
+      }).catch(()=>{});
+    }
+  }, 1000);
 
   // Auto resume
   if (me?.mode === "host" && me?.code) {
