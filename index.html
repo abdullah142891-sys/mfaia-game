@@ -21,26 +21,45 @@
   </style>
 </head>
 
-<body class="bg-slate-950 text-slate-100 min-h-screen">
-  <header class="sticky top-0 z-40 bg-slate-950/80 glass border-b border-slate-800">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+<body class="text-slate-100 min-h-screen overflow-x-hidden">
+
+  <!-- Background -->
+  <div aria-hidden="true" class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950 to-slate-900"></div>
+    <div class="absolute inset-0 opacity-30" style="background:
+      radial-gradient(900px 500px at 10% 0%, rgba(56,189,248,0.18), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(34,197,94,0.12), transparent 60%),
+      radial-gradient(900px 600px at 50% 100%, rgba(168,85,247,0.10), transparent 60%);"></div>
+    <div class="absolute inset-x-0 bottom-0 h-[58vh] opacity-15"
+      style="background-image: url('data:image/svg+xml;utf8,<?xml version=%221.0%22 encoding=%22UTF-8%22?><svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 500%22><defs><linearGradient id=%22g%22 x1=%220%22 x2=%220%22 y1=%220%22 y2=%221%22><stop offset=%220%25%22 stop-color=%22%23ffffff%22 stop-opacity=%220.45%22/><stop offset=%22100%25%22 stop-color=%22%23ffffff%22 stop-opacity=%220.0%22/></linearGradient></defs><path fill=%22url(%23g)%22 d=%22M0 420 L80 380 L130 395 L210 340 L260 360 L320 300 L390 330 L460 250 L520 290 L590 210 L650 260 L720 190 L780 240 L860 160 L920 220 L1000 140 L1080 210 L1200 120 L1200 500 L0 500 Z%22/></svg>'); background-size: cover; background-position: center bottom;"></div>
+  </div>
+
+  
+  <header class="sticky top-0 z-40 bg-slate-950/50 glass border-b border-slate-800/70">
+    <div class="px-4 py-3 flex items-center justify-between">
+      <button id="btnMenu" class="tap p-2 rounded-2xl bg-slate-900/40 border border-slate-800/70 hover:bg-slate-900/60" aria-label="القائمة">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+
       <div class="flex items-center gap-2">
-        <div class="text-lg font-extrabold">🕵️‍♂️ مافيا</div>
-        <div id="badgeMini" class="hidden text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60 text-slate-200">—</div>
+        <div class="text-lg font-extrabold tracking-wide">مافيا</div>
+        <div id="badgeMini" class="hidden text-[11px] px-2 py-1 rounded-xl border border-slate-700/70 bg-slate-900/40 text-slate-200">—</div>
       </div>
-      <div class="flex gap-2">
-        <button id="btnHow" class="tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">
-          كيف تلعب؟
+
+      <div class="flex items-center gap-2">
+        <button id="btnHow" class="tap p-2 rounded-2xl bg-slate-900/40 border border-slate-800/70 hover:bg-slate-900/60" aria-label="معلومات">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" d="M12 17v-6"/><path stroke="currentColor" stroke-width="2" d="M12 8h.01"/><path stroke="currentColor" stroke-width="2" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
         </button>
-        <button id="btnCopyShare" class="hidden tap text-sm px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">
-          مشاركة
+        <button id="btnCopyShare" class="hidden tap p-2 rounded-2xl bg-slate-900/40 border border-slate-800/70 hover:bg-slate-900/60" aria-label="مشاركة">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 6l-4-4-4 4"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 2v14"/></svg>
         </button>
-        <button id="btnLeave" class="hidden tap text-sm px-3 py-2 rounded-xl bg-rose-700/40 hover:bg-rose-700/60 border border-rose-700">
-          خروج
+        <button id="btnLeave" class="hidden tap p-2 rounded-2xl bg-rose-700/30 border border-rose-700/60 hover:bg-rose-700/45" aria-label="خروج">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 17l5-5-5-5"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 12H9"/></svg>
         </button>
       </div>
     </div>
   </header>
+
 
   <!-- Modal: How to play -->
   <div id="howModal" class="hidden fixed inset-0 z-50">
@@ -67,6 +86,30 @@
         </div>
       </div>
     </div>
+
+  <!-- Modal: Phase transition summary -->
+  <div id="phaseModal" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/70"></div>
+    <div class="absolute inset-x-0 bottom-0 max-w-md mx-auto p-4">
+      <div class="rounded-3xl border border-slate-800 bg-slate-950 shadow-xl p-5 space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="text-xl font-extrabold">🧾 ملخص الجولة</div>
+          <button id="btnClosePhase" class="tap px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700">إغلاق</button>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+          <div id="pmTitle" class="text-lg font-extrabold">—</div>
+          <div id="pmBody" class="mt-2 text-sm text-slate-200 leading-7">—</div>
+        </div>
+        <div class="text-xs text-slate-400 leading-6">
+          هذا الملخص عام ولا يكشف أدوار.
+        </div>
+        <button id="btnPhaseOk" class="tap w-full px-4 py-4 rounded-3xl bg-emerald-600 hover:bg-emerald-500 font-extrabold text-lg">
+          متابعة ✅
+        </button>
+      </div>
+    </div>
+  </div>
+
   </div>
 
   <!-- Modal: Role reveal (one-time per game on device) -->
@@ -89,7 +132,7 @@
     </div>
   </div>
 
-  <main class="max-w-md mx-auto px-4 py-5 space-y-4">
+  <main class="px-4 py-4 space-y-4 max-w-2xl mx-auto pb-[60vh]">
 
     <!-- Screen: Mode -->
     <section id="screenMode" class="space-y-4">
@@ -317,18 +360,18 @@
             </div>
             <div class="text-left">
               <div class="text-xs text-slate-300">الوقت المتبقي</div>
-              <div id="phaseLeft" class="text-2xl font-extrabold mt-1">—</div>
+              <div class="text-sm text-slate-400">⬇️ لوحة الإجراء بالأسفل</div>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3">
               <div class="text-xs text-slate-300">المرحلة</div>
-              <div id="pPhase" class="text-2xl font-extrabold mt-1">—</div>
+              <div class="text-2xl font-extrabold mt-1">—</div>
             </div>
             <div class="rounded-2xl border border-slate-800 bg-slate-950 p-3 text-right">
               <div class="text-xs text-slate-300">الجولة</div>
-              <div id="pRound" class="text-2xl font-extrabold mt-1">—</div>
+              <div class="text-2xl font-extrabold mt-1">—</div>
             </div>
           </div>
 
@@ -359,18 +402,32 @@
         </div>
 
         <!-- In-game players list -->
-        <div id="inGamePlayersBox" class="hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="font-extrabold text-lg">اللاعبون</div>
-            <div class="text-xs text-slate-400"><span id="inGameCount">—</span></div>
+        <div id="inGamePlayersBox" class="hidden">
+          <div class="flex items-center justify-center">
+            <div class="px-5 py-2 rounded-2xl bg-slate-950/60 border border-slate-800/70 shadow-sm flex items-center gap-3">
+              <div class="text-xs text-slate-300">⏱️ الوقت</div>
+              <div id="phaseLeft" class="text-lg font-extrabold tabular-nums">—</div>
+              <div class="w-px h-5 bg-slate-800/70"></div>
+              <div id="pPhase" class="text-sm font-extrabold">—</div>
+              <div class="text-xs text-slate-400">·</div>
+              <div class="text-sm font-bold">جولة <span id="pRound">—</span></div>
+            </div>
           </div>
-          <div id="inGamePlayersList" class="space-y-2"></div>
-          <div class="text-xs text-slate-400 leading-6">
-            الحالة تظهر فقط (حي/خارج). الأدوار لا تظهر.
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between mb-2">
+              <div class="font-extrabold text-lg">اللاعبون</div>
+              <div class="text-xs text-slate-400"><span id="inGameCount">—</span></div>
+            </div>
+            <div id="inGamePlayersList" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+            <div class="mt-2 text-xs text-slate-400 leading-6">
+              الحالة فقط (حي/خارج). الأدوار لا تظهر.
+            </div>
           </div>
         </div>
 
         <!-- History -->
+
         <div id="historyBox" class="hidden rounded-3xl border border-slate-800 bg-slate-900/40 p-5 space-y-3">
           <div class="font-extrabold text-lg">سجل الجولات</div>
           <div id="historyList" class="space-y-2"></div>
@@ -399,14 +456,20 @@
           </div>
         </div>
 
-        <div class="rounded-3xl border border-slate-800 bg-slate-900/40 p-5">
-          <div class="flex items-center justify-between">
-            <div class="font-extrabold text-lg">الإجراء</div>
-            <div class="text-xs text-slate-400">📊 <span id="liveTally">—</span></div>
-          </div>
-          <div id="pActionBox" class="mt-3 space-y-3"></div>
-        </div>
+        <div class="fixed inset-x-0 bottom-0 z-30 px-4 pb-[env(safe-area-inset-bottom)]">
+  <div class="max-w-2xl mx-auto rounded-t-3xl border border-slate-800/70 bg-slate-950/70 glass shadow-2xl">
+    <div class="px-5 pt-4 pb-3 border-b border-slate-800/70">
+      <div class="w-12 h-1.5 rounded-full bg-slate-700/60 mx-auto mb-3"></div>
+      <div class="flex items-center justify-between">
+        <div class="font-extrabold text-lg">الإجراء</div>
+        <div class="text-xs text-slate-400">📊 <span id="liveTally">—</span></div>
       </div>
+    </div>
+    <div class="px-5 py-4 max-h-[52vh] overflow-auto">
+      <div id="pActionBox" class="space-y-3"></div>
+    </div>
+  </div>
+</div>
     </section>
   </main>
 
@@ -458,12 +521,20 @@
   const normName = (s) => String(s || "").trim().replace(/\s+/g, " ").toLowerCase();
   const clampInt = (x, lo, hi) => Math.max(lo, Math.min(hi, Number(x || 0)));
 
-  function fmtLeft(ms){
-    const s = Math.max(0, Math.ceil(ms / 1000));
-    const m = Math.floor(s / 60);
+  function fmtLeft\(ms\)\{
+    const s = Math\.max\(0, Math\.ceil\(ms / 1000\)\);
+    const m = Math\.floor\(s / 60\);
     const r = s % 60;
-    return m > 0 ? `${m}:${String(r).padStart(2,"0")}` : `${r}s`;
+    return m > 0 \? `\$\{m\}:\$\{String\(r\)\.padStart\(2,"0"\)\}` : `\$\{r\}s`;
+  \}
+
+  function showPhaseModal(title, body){
+    if (!phaseModal) return;
+    pmTitle.textContent = title || "—";
+    pmBody.textContent = body || "—";
+    phaseModal.classList.remove("hidden");
   }
+  function closePhaseModal(){ phaseModal?.classList.add("hidden"); }
 
   function getTopCandidatesWeighted(votesByPid, playersObj, weightFn){
     const tally = {};
@@ -506,6 +577,12 @@
   const btnHow = $("btnHow");
   const howModal = $("howModal");
   const btnCloseHow = $("btnCloseHow");
+
+  const phaseModal = $("phaseModal");
+  const btnClosePhase = $("btnClosePhase");
+  const btnPhaseOk = $("btnPhaseOk");
+  const pmTitle = $("pmTitle");
+  const pmBody = $("pmBody");
 
   const roleModal = $("roleModal");
   const rmRole = $("rmRole");
@@ -631,6 +708,8 @@
   // Render guards
   let lastRenderKey = "";
   let lastActionKey = "";
+  let lastPhaseLocal = "";
+  let lastRoundLocal = 0;
 
   // Engine heartbeat
   let engineTimer = null;
@@ -793,10 +872,51 @@
     return "";
   }
 
+  
   function buildAliveOptions(playersObj, excludeId, allowSelf){
     const alive = Object.values(playersObj || {}).filter(p => p.alive && !p.left && (allowSelf || p.id !== excludeId));
     return alive.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join("");
   }
+
+  // UI: selectable cards with search (أفضل للجوال)
+  function renderPickCards(containerEl, playersObj, excludeId, allowSelf, selectedId, onSelect){
+    const all = Object.values(playersObj || {}).filter(p => p.alive && !p.left && (allowSelf || p.id !== excludeId));
+    containerEl.innerHTML = `
+      <input id="pickSearch" placeholder="بحث بالاسم…"
+        class="tap w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" />
+      <div id="pickList" class="mt-3 space-y-2 max-h-64 overflow-auto pr-1"></div>
+    `;
+    const searchEl = containerEl.querySelector("#pickSearch");
+    const listEl = containerEl.querySelector("#pickList");
+
+    const renderList = () => {
+      const q = (searchEl.value || "").trim().toLowerCase();
+      const filtered = q ? all.filter(p => normName(p.name).includes(q)) : all;
+      listEl.innerHTML = filtered.length ? "" : `<div class="text-sm text-slate-400 text-center py-6">لا يوجد نتائج.</div>`;
+      filtered.forEach(p => {
+        const active = p.id === selectedId;
+        const badge = active
+          ? `<span class="text-xs px-2 py-1 rounded-xl border border-emerald-700 bg-emerald-900/20">محدد</span>`
+          : `<span class="text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60">اختر</span>`;
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = `tap w-full flex items-center justify-between rounded-2xl border px-3 py-3 text-right ${
+          active ? "border-emerald-700 bg-emerald-900/10" : "border-slate-800 bg-slate-950 hover:bg-slate-900/30"
+        }`;
+        row.innerHTML = `<div class="font-bold">${escapeHtml(p.name)}</div>${badge}`;
+        row.addEventListener("click", () => {
+          selectedId = p.id;
+          onSelect(p.id);
+          renderList();
+        });
+        listEl.appendChild(row);
+      });
+    };
+
+    searchEl.addEventListener("input", renderList);
+    renderList();
+  }
+
 
   // -------- Engine (auto) --------
   async function tryAcquireLock(code, pid){
@@ -1238,22 +1358,48 @@
     });
   }
 
+  
   function renderInGamePlayers(playersObj, myPid){
     const players = Object.values(playersObj || {}).filter(p => !p.left);
     const alive = players.filter(p => p.alive);
     inGameCount.textContent = `${alive.length} أحياء / ${players.length} إجمالي`;
-    inGamePlayersList.innerHTML = players.length ? "" : `<div class="text-slate-400 text-sm">لا يوجد لاعبين.</div>`;
-    players.sort((a,b)=> (a.alive===b.alive? a.name.localeCompare(b.name): (a.alive? -1:1))).forEach(p => {
-      const isMe = p.id === myPid;
-      const badge = p.alive ? `<span class="text-xs px-2 py-1 rounded-xl border border-emerald-700 bg-emerald-900/20">حي</span>`
-                            : `<span class="text-xs px-2 py-1 rounded-xl border border-rose-700 bg-rose-900/20">خارج</span>`;
-      inGamePlayersList.innerHTML += `
-        <div class="flex items-center justify-between rounded-2xl bg-slate-950 border border-slate-800 px-3 py-2">
-          <div class="font-bold">${escapeHtml(p.name)}${isMe ? ` <span class="text-xs text-slate-400">(أنت)</span>` : ""}</div>
-          ${badge}
-        </div>
-      `;
-    });
+
+    const initials = (name) => {
+      const t = String(name || "").trim().split(/\s+/).filter(Boolean);
+      const a = (t[0] || "؟")[0];
+      const b = (t[1] || "")[0] || "";
+      return (a + b).toUpperCase();
+    };
+
+    inGamePlayersList.innerHTML = players.length ? "" : `<div class="col-span-2 sm:col-span-3 text-slate-400 text-sm text-center py-6">لا يوجد لاعبين.</div>`;
+
+    players
+      .sort((a,b)=> (a.alive===b.alive? a.name.localeCompare(b.name): (a.alive? -1:1)))
+      .forEach(p => {
+        const isMe = p.id === myPid;
+        const ring = isMe ? "ring-2 ring-sky-500/70" : "ring-1 ring-slate-800/80";
+        const state = p.alive
+          ? `<span class="text-[11px] px-2 py-1 rounded-xl border border-emerald-700/70 bg-emerald-900/10">حي</span>`
+          : `<span class="text-[11px] px-2 py-1 rounded-xl border border-rose-700/70 bg-rose-900/10">خارج</span>`;
+
+        const tile = document.createElement("div");
+        tile.className = `rounded-3xl bg-slate-950/55 border border-slate-800/70 shadow-sm p-3 ${ring}`;
+        tile.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="w-10 h-10 rounded-2xl bg-slate-900/60 border border-slate-800/70 flex items-center justify-center font-extrabold">
+              ${escapeHtml(initials(p.name))}
+            </div>
+            <div class="flex items-center gap-2">
+              ${state}
+            </div>
+          </div>
+          <div class="mt-3">
+            <div class="font-extrabold text-sm truncate">${escapeHtml(p.name)}${isMe ? ` <span class="text-xs text-slate-400">(أنت)</span>` : ""}</div>
+            <div class="text-[11px] text-slate-400 mt-1">جاهز</div>
+          </div>
+        `;
+        inGamePlayersList.appendChild(tile);
+      });
   }
 
   function maybeShowRoleOnce(s, pid, roleKey){
@@ -1324,6 +1470,19 @@
       historyBox.classList.remove("hidden");
 
       const phase = s.phase;
+
+      // ملخص تلقائي عند الانتقال بين المراحل
+      if (s.status === "playing" && !s.winner) {
+        const curRound = Number(s.round || 0);
+        if (lastPhaseLocal && phase !== lastPhaseLocal) {
+          const title = (phase === "day") ? `☀️ بداية النهار — جولة ${curRound}` : `🌙 بداية الليل — جولة ${curRound}`;
+          // نعرض آخر سجل عام (log) كملخص
+          showPhaseModal(title, s.log || "—");
+        }
+        lastPhaseLocal = phase;
+        lastRoundLocal = curRound;
+      }
+
       pPhase.textContent = phase === "night" ? "ليل 🌙" : "نهار ☀️";
       pRound.textContent = String(s.round || 1);
 
@@ -1443,6 +1602,12 @@
       if (roleKey === "mafia") {
         const already = s.votes?.night?.mafia?.[pid];
         pActionBox.innerHTML = mkSendBlock("تصويت المافيا (قتل)", "selNightKill", "btnNightKill", `votes/night/mafia/${pid}`, !!already, "bg-rose-600 hover:bg-rose-500");
+        // cards picker
+        const pk = document.getElementById("pickNightKill");
+        if (pk && !already) {
+          renderPickCards(pk, playersObj, pid, false, "", (id) => { document.getElementById("selNightKill").value = id; });
+        }
+
         if (!already) $("btnNightKill").addEventListener("click", async () => {
           const victimId = $("selNightKill").value || "";
           if (!victimId) return alert("اختر الضحية.");
@@ -1461,14 +1626,17 @@
         pActionBox.innerHTML = `
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
             <div class="font-extrabold text-lg">🩺 الطبيب (إنقاذ)</div>
-            <select id="selDoc" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-              <option value="">اختر من تنقذه</option>${aliveAllowSelf}
-            </select>
+            <div id="pickDoc"></div><input type="hidden" id="selDoc" value="">
             <button id="btnDoc" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-emerald-600 hover:bg-emerald-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
             <button id="btnDocSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
           </div>`;
+
+        const pk = document.getElementById("pickDoc");
+        if (pk && !already) {
+          renderPickCards(pk, playersObj, pid, true, "", (id) => { document.getElementById("selDoc").value = id; });
+        }
         if (!already) $("btnDoc").addEventListener("click", async () => {
           const t = $("selDoc").value || "";
           if (!t) return alert("اختر لاعب.");
@@ -1487,15 +1655,18 @@
         pActionBox.innerHTML = `
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
             <div class="font-extrabold text-lg">🔎 المحقق (تحقيق)</div>
-            <select id="selDet" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-              <option value="">اختر الهدف</option>${aliveNoSelf}
-            </select>
+            <div id="pickDet"></div><input type="hidden" id="selDet" value="">
             <button id="btnDet" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-sky-600 hover:bg-sky-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
             <button id="btnDetSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
             <div class="text-xs text-slate-400">النتيجة تظهر لك فقط بعد التنفيذ.</div>
           </div>`;
+
+        const pk = document.getElementById("pickDet");
+        if (pk && !already) {
+          renderPickCards(pk, playersObj, pid, false, "", (id) => { document.getElementById("selDet").value = id; });
+        }
         if (!already) $("btnDet").addEventListener("click", async () => {
           const t = $("selDet").value || "";
           if (!t) return alert("اختر هدف.");
@@ -1514,14 +1685,17 @@
         pActionBox.innerHTML = `
           <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
             <div class="font-extrabold text-lg">🛡️ الحارس (حماية)</div>
-            <select id="selBg" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${already ? "disabled" : ""}>
-              <option value="">اختر من تحميه</option>${aliveAllowSelf}
-            </select>
+            <div id="pickBg"></div><input type="hidden" id="selBg" value="">
             <button id="btnBg" class="tap w-full px-4 py-4 rounded-3xl ${already ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-indigo-600 hover:bg-indigo-500"} font-extrabold" ${already ? "disabled" : ""}>
               ${already ? "تم الإرسال" : "إرسال"}
             </button>
             <button id="btnBgSkip" class="tap w-full px-4 py-3 rounded-3xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-sm">تخطي</button>
           </div>`;
+
+        const pk = document.getElementById("pickBg");
+        if (pk && !already) {
+          renderPickCards(pk, playersObj, pid, true, "", (id) => { document.getElementById("selBg").value = id; });
+        }
         if (!already) $("btnBg").addEventListener("click", async () => {
           const t = $("selBg").value || "";
           if (!t) return alert("اختر لاعب.");
@@ -1538,6 +1712,11 @@
       if (roleKey === "serial") {
         const already = s.votes?.night?.serial?.[pid];
         pActionBox.innerHTML = mkSendBlock("🔪 القاتل المتسلسل (قتل)", "selSk", "btnSk", `votes/night/serial/${pid}`, !!already, "bg-rose-600 hover:bg-rose-500");
+
+        const pk = document.getElementById("pickSk");
+        if (pk && !already) {
+          renderPickCards(pk, playersObj, pid, false, "", (id) => { document.getElementById("selSk").value = id; });
+        }
         if (!already) $("btnSk").addEventListener("click", async () => {
           const t = $("selSk").value || "";
           if (!t) return alert("اختر الضحية.");
@@ -1570,9 +1749,7 @@
                 <div class="font-bold">🩺 إنقاذ</div>
                 <div class="text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60">${saveUsed ? "مستخدم" : (ws ? "مرسَل" : "متاح")}</div>
               </div>
-              <select id="selWitchSave" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${saveUsed || ws ? "disabled" : ""}>
-                <option value="">اختر من تنقذه</option>${aliveAllowSelf}
-              </select>
+              <div id="pickWitchSave"></div><input type="hidden" id="selWitchSave" value="">
               <button id="btnWitchSave" class="tap w-full px-4 py-3 rounded-3xl ${saveUsed || ws ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-emerald-600 hover:bg-emerald-500"} font-extrabold" ${saveUsed || ws ? "disabled" : ""}>
                 إرسال الإنقاذ
               </button>
@@ -1583,9 +1760,7 @@
                 <div class="font-bold">☠️ سم</div>
                 <div class="text-xs px-2 py-1 rounded-xl border border-slate-700 bg-slate-900/60">${poisonUsed ? "مستخدم" : (wp ? "مرسَل" : "متاح")}</div>
               </div>
-              <select id="selWitchPoison" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${poisonUsed || wp ? "disabled" : ""}>
-                <option value="">اختر من تسممه</option>${aliveNoSelf}
-              </select>
+              <div id="pickWitchPoison"></div><input type="hidden" id="selWitchPoison" value="">
               <button id="btnWitchPoison" class="tap w-full px-4 py-3 rounded-3xl ${poisonUsed || wp ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${poisonUsed || wp ? "disabled" : ""}>
                 إرسال السم
               </button>
@@ -1595,6 +1770,15 @@
               تخطي (لا شيء)
             </button>
           </div>`;
+
+        const pkS = document.getElementById("pickWitchSave");
+        if (pkS && !(saveUsed || ws)) {
+          renderPickCards(pkS, playersObj, pid, true, "", (id) => { document.getElementById("selWitchSave").value = id; });
+        }
+        const pkP = document.getElementById("pickWitchPoison");
+        if (pkP && !(poisonUsed || wp)) {
+          renderPickCards(pkP, playersObj, pid, false, "", (id) => { document.getElementById("selWitchPoison").value = id; });
+        }
 
         $("btnWitchSkip").addEventListener("click", async () => {
           await SESS(me.code).child(`votes/night/witchSave/${pid}`).set("skip");
@@ -1639,9 +1823,7 @@
     pActionBox.innerHTML = `
       <div class="rounded-2xl border border-slate-800 bg-slate-950 p-4 space-y-3">
         <div class="font-extrabold text-lg">تصويت النهار (إقصاء)</div>
-        <select id="selDayVote" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${dayAlready ? "disabled" : ""}>
-          <option value="">اختر الشخص</option>${aliveOptionsNoSelf}
-        </select>
+        <div id="pickDayVote"></div><input type="hidden" id="selDayVote" value="">
         <button id="btnDayVote" class="tap w-full px-4 py-4 rounded-3xl ${dayAlready ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-amber-600 hover:bg-amber-500"} font-extrabold" ${dayAlready ? "disabled" : ""}>
           ${dayAlready ? "تم الإرسال" : "إرسال التصويت"}
         </button>
@@ -1655,15 +1837,18 @@
               ${used ? "مستخدم" : (sv ? "تم الإرسال" : "متاح")}
             </div>
           </div>
-          <select id="selSniper" class="w-full rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 outline-none focus:border-sky-500" ${sniperDisabled ? "disabled" : ""}>
-            <option value="">اختر الهدف</option>${aliveOptionsNoSelf}
-          </select>
+          <div id="pickSniper"></div><input type="hidden" id="selSniper" value="">
           <button id="btnSniper" class="tap w-full px-4 py-4 rounded-3xl ${sniperDisabled ? "bg-slate-800 border border-slate-700 opacity-60" : "bg-rose-600 hover:bg-rose-500"} font-extrabold" ${sniperDisabled ? "disabled" : ""}>
             ${used ? "تم استخدام الطلقة" : (sv ? "تم تحديد الهدف" : "تحديد الهدف (سري)")}
           </button>
         </div>
       ` : "" }
     `;
+
+    const pk = document.getElementById("pickDayVote");
+    if (pk && !dayAlready) {
+      renderPickCards(pk, playersObj, pid, false, "", (id) => { document.getElementById("selDayVote").value = id; });
+    }
 
     if (!dayAlready) $("btnDayVote").addEventListener("click", async () => {
       const targetId = $("selDayVote").value || "";
@@ -1673,6 +1858,12 @@
     });
 
     if (roleKey === "sniper" && !sniperDisabled) $("btnSniper").addEventListener("click", async () => {
+
+    const pkS = document.getElementById("pickSniper");
+    if (pkS && !sniperDisabled) {
+      renderPickCards(pkS, playersObj, pid, false, "", (id) => { document.getElementById("selSniper").value = id; });
+    }
+
       const targetId = $("selSniper").value || "";
       if (!targetId) return alert("اختر الهدف.");
       await SESS(me.code).child(`votes/dayExtra/sniper/${pid}`).set(targetId);
@@ -1681,6 +1872,8 @@
   }
 
   // ---------- UI Events ----------
+  btnMenu?.addEventListener("click", () => howModal.classList.remove("hidden"));
+
   btnGoCreate.addEventListener("click", () => setScreen("create"));
   btnGoJoin.addEventListener("click", () => setScreen("join"));
   btnBackFromCreate.addEventListener("click", () => setScreen("mode"));
@@ -1697,6 +1890,11 @@
 
   btnHow.addEventListener("click", () => howModal.classList.remove("hidden"));
   btnCloseHow.addEventListener("click", () => howModal.classList.add("hidden"));
+
+  btnClosePhase.addEventListener("click", closePhaseModal);
+  btnPhaseOk.addEventListener("click", closePhaseModal);
+  phaseModal.addEventListener("click", (e) => { if (e.target === phaseModal) closePhaseModal(); });
+
   howModal.addEventListener("click", (e) => { if (e.target === howModal) howModal.classList.add("hidden"); });
 
   btnRoleOk.addEventListener("click", async () => {
