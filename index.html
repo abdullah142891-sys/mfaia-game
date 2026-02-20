@@ -1991,37 +1991,34 @@ button.tap{
   }
 })();
 </script>
-  <script>
-  // Debug overlay: shows any JS error that stops the app (mobile-friendly)
-  (function () {
-    const box = document.createElement("div");
-    box.id = "debugBox";
-    box.style.cssText = `
-      position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 999999;
-      background: rgba(220, 38, 38, .92); color: #fff; padding: 10px 12px;
-      border-radius: 14px; font: 12px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
-      display: none; white-space: pre-wrap; direction: ltr;
-    `;
-    document.body.appendChild(box);
+<!-- DEBUG PANEL (temporary) -->
+<div id="debugPanel" style="
+  position:fixed; left:10px; right:10px; bottom:10px;
+  z-index:999999; background:rgba(0,0,0,.85); color:#fff;
+  padding:10px; border-radius:12px; font:12px/1.5 system-ui;
+  display:none; max-height:40vh; overflow:auto;">
+  <div style="font-weight:700; margin-bottom:6px;">Debug</div>
+  <pre id="debugText" style="white-space:pre-wrap; margin:0;"></pre>
+</div>
 
-    function show(msg){
-      box.style.display = "block";
-      box.textContent = "JS ERROR:\n" + msg;
-    }
+<script>
+(function(){
+  const panel = document.getElementById("debugPanel");
+  const text = document.getElementById("debugText");
+  function show(msg){
+    panel.style.display = "block";
+    text.textContent += msg + "\n";
+  }
+  window.addEventListener("error", (e)=> show("JS ERROR: " + (e.message || e.error)));
+  window.addEventListener("unhandledrejection", (e)=> show("PROMISE ERROR: " + (e.reason?.message || e.reason)));
 
-    window.addEventListener("error", (e) => {
-      show((e.message || "Unknown error") + "\n" + (e.filename || "") + ":" + (e.lineno || "") + ":" + (e.colno || ""));
-    });
-
-    window.addEventListener("unhandledrejection", (e) => {
-      show("Unhandled Promise:\n" + (e.reason?.message || String(e.reason)));
-    });
-
-    console.log("✅ Debug overlay loaded");
-  })();
+  // اختبار سريع: هل الجافاسكربت يعمل أصلاً؟
+  show("✅ debug loaded");
+})();
 </script>
 </body>
 </html>
+
 
 
 
